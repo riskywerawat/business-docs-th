@@ -1,0 +1,8 @@
+interface:
+  display_name: "Business Docs TH"
+  short_description: "สร้างเอกสาร Business ภาษาไทยจาก source code"
+  brand_color: "#1747D7"
+  default_prompt: "ใช้ $business-docs-th เพื่อวิเคราะห์ feature นี้และสร้างเอกสาร Business ภาษาไทยจาก implementation จริง"
+
+policy:
+  allow_implicit_invocation: true

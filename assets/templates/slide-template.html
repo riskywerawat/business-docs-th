@@ -1,0 +1,1608 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#0b1428">
+  <title>Cognito Integration Demo — Sprint Review Deck</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bai+Jamjuree:wght@400;500;600;700&amp;family=Chakra+Petch:wght@500;600;700&amp;family=JetBrains+Mono:wght@400;500;600&amp;display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --night: #0b1428;
+      --night-2: #121f39;
+      --night-code: #070d1a;
+      --paper: #f4f0e6;
+      --white: #fffdf8;
+      --ink: #13203a;
+      --muted: #627087;
+      --line: rgba(19, 32, 58, .16);
+      --line-dark: rgba(255, 255, 255, .17);
+      --blue: #2f65ff;
+      --blue-deep: #1747d7;
+      --acid: #d9ff43;
+      --mint: #68e0c2;
+      --orange: #ff6b3d;
+      --sans: "Bai Jamjuree", sans-serif;
+      --display: "Chakra Petch", "Bai Jamjuree", sans-serif;
+      --mono: "JetBrains Mono", monospace;
+      --ease: cubic-bezier(.16, .84, .3, 1);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      scroll-snap-type: y mandatory;
+      background: var(--night);
+    }
+
+    body {
+      margin: 0;
+      overflow-x: hidden;
+      background: var(--night);
+      color: var(--ink);
+      font-family: var(--sans);
+    }
+
+    button,
+    a,
+    select,
+    input {
+      font: inherit;
+    }
+
+    a {
+      color: inherit;
+    }
+
+    button {
+      color: inherit;
+    }
+
+    ::selection {
+      background: var(--acid);
+      color: var(--night);
+    }
+
+    .deck-progress {
+      position: fixed;
+      inset: 0 0 auto;
+      z-index: 100;
+      height: 4px;
+      background: rgba(255, 255, 255, .1);
+    }
+
+    .deck-progress span {
+      display: block;
+      width: calc(100% / 7);
+      height: 100%;
+      background: var(--acid);
+      transition: width .35s var(--ease);
+    }
+
+    .deck-header {
+      position: fixed;
+      inset: 20px 24px auto;
+      z-index: 90;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      pointer-events: none;
+    }
+
+    .deck-brand,
+    .deck-count {
+      display: inline-flex;
+      align-items: center;
+      min-height: 42px;
+      border: 1px solid var(--line-dark);
+      background: rgba(11, 20, 40, .84);
+      color: white;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, .16);
+      backdrop-filter: blur(14px);
+      pointer-events: auto;
+    }
+
+    .deck-brand {
+      gap: 10px;
+      padding: 6px 13px 6px 7px;
+      border-radius: 12px;
+      text-decoration: none;
+    }
+
+    .deck-brand-mark {
+      display: grid;
+      place-items: center;
+      width: 28px;
+      height: 28px;
+      border-radius: 8px;
+      background: var(--acid);
+      color: var(--night);
+      font-family: var(--display);
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .deck-brand-copy strong,
+    .deck-brand-copy span {
+      display: block;
+    }
+
+    .deck-brand-copy strong {
+      font-family: var(--display);
+      font-size: 11px;
+      letter-spacing: .04em;
+      line-height: 1.2;
+      text-transform: uppercase;
+    }
+
+    .deck-brand-copy span {
+      margin-top: 2px;
+      color: rgba(255, 255, 255, .58);
+      font-size: 8.5px;
+      line-height: 1.2;
+    }
+
+    .deck-count {
+      gap: 7px;
+      justify-content: center;
+      min-width: 74px;
+      padding: 0 12px;
+      border-radius: 999px;
+      font-family: var(--display);
+      font-size: 11px;
+      letter-spacing: .08em;
+    }
+
+    .deck-count span:first-child {
+      color: var(--acid);
+    }
+
+    .deck-count i {
+      width: 14px;
+      height: 1px;
+      background: rgba(255, 255, 255, .34);
+    }
+
+    .deck-rail {
+      position: fixed;
+      top: 50%;
+      right: 26px;
+      z-index: 90;
+      display: grid;
+      gap: 8px;
+      transform: translateY(-50%);
+    }
+
+    .deck-rail a {
+      position: relative;
+      display: block;
+      width: 10px;
+      height: 10px;
+      border: 1px solid rgba(255, 255, 255, .48);
+      border-radius: 50%;
+      background: rgba(11, 20, 40, .5);
+      box-shadow: 0 0 0 4px rgba(11, 20, 40, .16);
+      transition: transform .2s var(--ease), background .2s var(--ease);
+    }
+
+    .deck-rail a::before {
+      position: absolute;
+      top: 50%;
+      right: 18px;
+      width: max-content;
+      padding: 5px 8px;
+      border-radius: 6px;
+      background: var(--night);
+      color: white;
+      content: attr(data-label);
+      font-size: 9px;
+      opacity: 0;
+      pointer-events: none;
+      transform: translate(6px, -50%);
+      transition: opacity .15s ease, transform .15s ease;
+    }
+
+    .deck-rail a:hover::before,
+    .deck-rail a:focus-visible::before {
+      opacity: 1;
+      transform: translate(0, -50%);
+    }
+
+    .deck-rail a[aria-current="true"] {
+      border-color: var(--acid);
+      background: var(--acid);
+      transform: scale(1.35);
+    }
+
+    .deck-controls {
+      position: fixed;
+      right: 24px;
+      bottom: 22px;
+      z-index: 90;
+      display: flex;
+      gap: 8px;
+    }
+
+    .deck-controls button {
+      display: grid;
+      place-items: center;
+      width: 43px;
+      height: 43px;
+      border: 1px solid var(--line-dark);
+      border-radius: 12px;
+      background: rgba(11, 20, 40, .88);
+      color: white;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, .18);
+      cursor: pointer;
+      backdrop-filter: blur(14px);
+      transition: transform .18s var(--ease), border-color .18s ease, color .18s ease;
+    }
+
+    .deck-controls button:hover:not(:disabled),
+    .deck-controls button:focus-visible {
+      border-color: var(--acid);
+      color: var(--acid);
+      outline: none;
+      transform: translateY(-2px);
+    }
+
+    .deck-controls button:disabled {
+      cursor: default;
+      opacity: .34;
+    }
+
+    .keyboard-hint {
+      position: fixed;
+      left: 24px;
+      bottom: 25px;
+      z-index: 80;
+      color: rgba(255, 255, 255, .48);
+      font-family: var(--display);
+      font-size: 8.5px;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+    }
+
+    .slide {
+      position: relative;
+      isolation: isolate;
+      display: grid;
+      min-height: 100svh;
+      overflow: hidden;
+      scroll-snap-align: start;
+      scroll-snap-stop: always;
+    }
+
+    .slide::before {
+      position: absolute;
+      inset: 0;
+      z-index: -2;
+      content: "";
+      pointer-events: none;
+    }
+
+    .slide-shell {
+      position: relative;
+      align-self: center;
+      width: min(1360px, calc(100% - 132px));
+      margin: 0 auto;
+      padding: 100px 0 80px;
+    }
+
+    .slide-number {
+      position: absolute;
+      right: max(64px, 5vw);
+      bottom: -2.8vw;
+      z-index: -1;
+      color: rgba(19, 32, 58, .055);
+      font-family: var(--display);
+      font-size: clamp(150px, 23vw, 390px);
+      font-weight: 700;
+      letter-spacing: -.1em;
+      line-height: .72;
+      pointer-events: none;
+    }
+
+    .slide-dark {
+      background: var(--night);
+      color: white;
+    }
+
+    .slide-dark::before {
+      background:
+        radial-gradient(circle at 83% 18%, rgba(47, 101, 255, .35), transparent 28%),
+        linear-gradient(rgba(255, 255, 255, .045) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, .045) 1px, transparent 1px);
+      background-size: auto, 42px 42px, 42px 42px;
+      mask-image: linear-gradient(to right, transparent 4%, black 32%, black);
+    }
+
+    .slide-dark .slide-number {
+      color: rgba(255, 255, 255, .055);
+    }
+
+    .slide-hero {
+      background: radial-gradient(circle at 85% 15%, #2a0845 0%, #15002a 35%, #08031a 100%);
+      color: white;
+    }
+
+    .slide-hero::before {
+      background:
+        radial-gradient(circle at 20% 80%, rgba(217, 255, 67, .18), transparent 28%),
+        radial-gradient(circle at 85% 20%, rgba(255, 107, 61, .22), transparent 35%),
+        linear-gradient(rgba(255, 255, 255, .05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, .05) 1px, transparent 1px);
+      background-size: auto, auto, 48px 48px, 48px 48px;
+    }
+
+    .slide-hero .slide-number {
+      color: rgba(217, 255, 67, .05);
+    }
+
+    .slide-paper {
+      background: var(--paper);
+    }
+
+    .slide-paper::before {
+      background:
+        radial-gradient(circle at 8% 86%, rgba(255, 107, 61, .14), transparent 23%),
+        linear-gradient(rgba(19, 32, 58, .035) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(19, 32, 58, .035) 1px, transparent 1px);
+      background-size: auto, 34px 34px, 34px 34px;
+    }
+
+    .slide-blue {
+      background: var(--blue-deep);
+      color: white;
+    }
+
+    .slide-blue::before {
+      background:
+        radial-gradient(circle at 76% 22%, rgba(217, 255, 67, .22), transparent 21%),
+        radial-gradient(circle at 8% 86%, rgba(104, 224, 194, .18), transparent 24%);
+    }
+
+    .slide-blue .slide-number {
+      color: rgba(255, 255, 255, .07);
+    }
+
+    .kicker {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      margin: 0 0 16px;
+      font-family: var(--display);
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+    }
+
+    .kicker::before {
+      width: 28px;
+      height: 3px;
+      background: currentColor;
+      content: "";
+    }
+
+    .slide-dark .kicker,
+    .slide-blue .kicker {
+      color: var(--acid);
+    }
+
+    .slide-hero .kicker {
+      color: var(--acid);
+    }
+
+    .slide-paper .kicker {
+      color: var(--blue);
+    }
+
+    h1,
+    h2,
+    h3,
+    p {
+      margin-top: 0;
+    }
+
+    h1,
+    h2,
+    h3 {
+      font-family: var(--display);
+    }
+
+    h2 {
+      max-width: 22ch;
+      margin-bottom: 14px;
+      font-size: clamp(32px, 4.2vw, 56px);
+      letter-spacing: -.045em;
+      line-height: 1.05;
+    }
+
+    .hero-title {
+      font-size: clamp(42px, 5.8vw, 76px);
+      letter-spacing: -.045em;
+      line-height: 1.02;
+      margin-bottom: 16px;
+    }
+
+    .hero-lead {
+      max-width: 62ch;
+      font-size: clamp(16px, 1.8vw, 22px);
+      line-height: 1.55;
+      color: rgba(255, 255, 255, .88);
+      font-weight: 500;
+    }
+
+    .lead {
+      max-width: 68ch;
+      margin-bottom: 0;
+      color: inherit;
+      font-size: clamp(14px, 1.4vw, 17px);
+      line-height: 1.7;
+      opacity: .75;
+    }
+
+    .button-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 26px;
+    }
+
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      min-height: 44px;
+      padding: 0 18px;
+      border: 1px solid currentColor;
+      border-radius: 10px;
+      font-family: var(--display);
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: .03em;
+      text-decoration: none;
+      cursor: pointer;
+      transition: transform .18s var(--ease), box-shadow .18s var(--ease), background .18s ease;
+    }
+
+    .button-hero {
+      min-height: 52px;
+      padding: 0 26px;
+      font-size: 14px;
+      border-radius: 14px;
+    }
+
+    .button:hover,
+    .button:focus-visible {
+      outline: none;
+      transform: translateY(-2px);
+    }
+
+    .button-primary {
+      border-color: var(--acid);
+      background: var(--acid);
+      color: var(--night);
+      box-shadow: 0 10px 24px rgba(217, 255, 67, .15);
+    }
+
+    .button-secondary {
+      border-color: rgba(255, 255, 255, .3);
+      background: rgba(255, 255, 255, .06);
+      color: white;
+    }
+
+    .button-dark {
+      border-color: var(--night);
+      background: var(--night);
+      color: white;
+    }
+
+    .button-copy {
+      min-height: 32px;
+      padding: 0 12px;
+      border-radius: 6px;
+      background: rgba(255, 255, 255, .1);
+      border: 1px solid rgba(255, 255, 255, .2);
+      color: var(--acid);
+      font-size: 10px;
+      cursor: pointer;
+    }
+
+    .button-copy:hover {
+      background: var(--acid);
+      color: var(--night);
+    }
+
+    .two-col-layout {
+      display: grid;
+      grid-template-columns: minmax(360px, .85fr) minmax(460px, 1.15fr);
+      align-items: start;
+      gap: clamp(32px, 5vw, 64px);
+      margin-top: 24px;
+    }
+
+    .code-terminal {
+      overflow: hidden;
+      border-radius: 14px;
+      border: 1px solid var(--line-dark);
+      background: var(--night-code);
+      color: #cbd5e1;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, .3);
+    }
+
+    .slide-paper .code-terminal {
+      border-color: rgba(19, 32, 58, .2);
+    }
+
+    .terminal-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 14px;
+      background: rgba(255, 255, 255, .04);
+      border-bottom: 1px solid rgba(255, 255, 255, .1);
+      font-family: var(--display);
+      font-size: 10px;
+      letter-spacing: .05em;
+    }
+
+    .slide-paper .terminal-head {
+      background: #1e293b;
+      color: #94a3b8;
+    }
+
+    .terminal-head .dots {
+      display: flex;
+      gap: 5px;
+    }
+
+    .terminal-head .dots i {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, .25);
+    }
+
+    .code-terminal pre {
+      margin: 0;
+      padding: 16px;
+      max-height: 260px;
+      overflow-y: auto;
+      font-family: var(--mono);
+      font-size: 11.5px;
+      line-height: 1.6;
+      white-space: pre-wrap;
+      word-break: break-all;
+    }
+
+    .sandbox-card {
+      padding: 24px;
+      border-radius: 16px;
+      background: rgba(255, 255, 255, .05);
+      border: 1px solid var(--line-dark);
+      backdrop-filter: blur(12px);
+    }
+
+    .slide-paper .sandbox-card {
+      background: white;
+      border-color: var(--line);
+      box-shadow: 0 12px 30px rgba(19, 32, 58, .07);
+    }
+
+    .sandbox-card h3 {
+      font-size: 18px;
+      margin-bottom: 10px;
+    }
+
+    .form-group {
+      margin-bottom: 16px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 6px;
+      font-family: var(--display);
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+
+    .form-control {
+      width: 100%;
+      padding: 10px 12px;
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, .25);
+      background: rgba(11, 20, 40, .6);
+      color: white;
+      font-size: 13px;
+    }
+
+    .slide-paper .form-control {
+      border-color: var(--line);
+      background: #f8fafc;
+      color: var(--ink);
+    }
+
+    .demo-badge-banner {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-top: 14px;
+      padding: 14px 18px;
+      border-radius: 10px;
+      background: rgba(217, 255, 67, .12);
+      border: 1px solid var(--acid);
+      color: var(--acid);
+    }
+
+    .slide-paper .demo-badge-banner {
+      background: #ecfdf5;
+      border-color: #10b981;
+      color: #065f46;
+    }
+
+    .demo-badge-banner strong {
+      font-family: var(--display);
+      font-size: 15px;
+    }
+
+    .portal-preview-card {
+      background: white;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, .05);
+      overflow: hidden;
+    }
+
+    .portal-nav-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 18px;
+      border-bottom: 1px solid #f1f5f9;
+      background: #fafafa;
+    }
+
+    .portal-nav-links {
+      display: flex;
+      gap: 20px;
+      font-size: 12px;
+    }
+
+    .portal-nav-link {
+      color: #64748b;
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    .portal-nav-link.active {
+      color: #2563eb;
+      font-weight: 600;
+      border-bottom: 2px solid #2563eb;
+      padding-bottom: 8px;
+    }
+
+    .portal-section-card {
+      margin: 16px;
+      padding: 16px;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      background: white;
+    }
+
+    .portal-section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 14px;
+    }
+
+    .portal-section-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: #1e293b;
+    }
+
+    .portal-btn-edit {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 4px 10px;
+      border-radius: 6px;
+      border: 1px solid #cbd5e1;
+      background: #f8fafc;
+      color: #2563eb;
+      font-size: 11px;
+      font-weight: 600;
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    .portal-btn-edit:hover {
+      background: #eff6ff;
+    }
+
+    .portal-grid-fields {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 14px;
+      font-size: 12px;
+    }
+
+    .portal-field-label {
+      color: #64748b;
+      margin-bottom: 3px;
+      font-size: 11px;
+    }
+
+    .portal-field-value {
+      color: #1e293b;
+      font-weight: 600;
+    }
+
+    /* Pitch Grid (Slide 0) */
+    .pitch-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 28px;
+      margin-top: 36px;
+    }
+
+    .pitch-card {
+      padding: 38px 34px;
+      border-radius: 24px;
+      background: rgba(18, 5, 40, .75);
+      border: 1px solid rgba(255, 255, 255, .16);
+      backdrop-filter: blur(20px);
+      box-shadow: 0 30px 60px rgba(0, 0, 0, .45);
+      transition: transform .25s var(--ease), border-color .25s ease;
+    }
+
+    .pitch-card:hover {
+      transform: translateY(-5px);
+      border-color: rgba(255, 255, 255, .32);
+    }
+
+    .pitch-badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 5px 14px;
+      border-radius: 999px;
+      font-family: var(--display);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      margin-bottom: 18px;
+    }
+
+    .pitch-badge-pbi1 {
+      background: rgba(217, 255, 67, .15);
+      border: 1px solid var(--acid);
+      color: var(--acid);
+    }
+
+    .pitch-badge-pbi2 {
+      background: rgba(104, 224, 194, .15);
+      border: 1px solid var(--mint);
+      color: var(--mint);
+    }
+
+    .pitch-headline {
+      font-size: clamp(26px, 2.5vw, 34px);
+      line-height: 1.15;
+      margin-bottom: 24px;
+    }
+
+    .compare-box {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      align-items: center;
+      gap: 16px;
+      padding: 16px 20px;
+      border-radius: 14px;
+      margin-bottom: 14px;
+      font-size: 15px;
+      line-height: 1.45;
+    }
+
+    .compare-box.old {
+      background: rgba(255, 107, 61, .1);
+      border: 1px dashed rgba(255, 107, 61, .38);
+      color: #fca5a5;
+    }
+
+    .compare-box.new {
+      background: rgba(217, 255, 67, .1);
+      border: 1px solid rgba(217, 255, 67, .38);
+      color: #fef08a;
+    }
+
+    .pitch-card-pbi2 .compare-box.new {
+      background: rgba(104, 224, 194, .1);
+      border-color: rgba(104, 224, 194, .38);
+      color: #a7f3d0;
+    }
+
+    .compare-tag {
+      font-family: var(--display);
+      font-size: 11px;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 6px;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+    }
+
+    .compare-box.old .compare-tag {
+      background: var(--orange);
+      color: white;
+    }
+
+    .compare-box.new .compare-tag {
+      background: var(--acid);
+      color: var(--night);
+    }
+
+    .pitch-card-pbi2 .compare-box.new .compare-tag {
+      background: var(--mint);
+      color: var(--night);
+    }
+
+    .deliverables-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 24px;
+    }
+
+    .deliverable-chip {
+      padding: 8px 16px;
+      border-radius: 10px;
+      background: rgba(255, 255, 255, .08);
+      border: 1px solid rgba(255, 255, 255, .15);
+      font-size: 13px;
+      color: #e2e8f0;
+      font-weight: 500;
+    }
+
+    .toast-pill {
+      display: none;
+      position: fixed;
+      top: 24px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 999;
+      background: var(--acid);
+      color: var(--night);
+      padding: 8px 18px;
+      border-radius: 999px;
+      font-family: var(--display);
+      font-weight: 700;
+      font-size: 11px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, .3);
+    }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(18px);
+      transition: opacity .55s var(--ease), transform .55s var(--ease);
+    }
+
+    .slide.is-active .reveal {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    @media (max-width: 1080px) {
+      .pitch-grid,
+      .two-col-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .slide-shell {
+        width: min(920px, calc(100% - 96px));
+      }
+    }
+
+    @media (max-width: 760px) {
+      .deck-brand-copy span,
+      .keyboard-hint,
+      .deck-rail {
+        display: none;
+      }
+
+      .deck-controls {
+        right: 14px;
+        bottom: 14px;
+      }
+
+      .slide-shell {
+        width: calc(100% - 30px);
+        padding: 85px 0 80px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="deck-progress" aria-hidden="true"><span id="deck-progress-bar"></span></div>
+
+  <div id="toast" class="toast-pill">COPIED TO CLIPBOARD!</div>
+
+  <header class="deck-header">
+    <a class="deck-brand" href="#slide-0" aria-label="กลับไปสไลด์แรก">
+      <span class="deck-brand-mark">HR</span>
+      <span class="deck-brand-copy">
+        <strong>Cognito Integration</strong>
+        <span>Sprint Review &amp; Mock Tool</span>
+      </span>
+    </a>
+    <div class="deck-count" aria-live="polite">
+      <span id="current-slide">01</span>
+      <i aria-hidden="true"></i>
+      <span id="total-slides">07</span>
+    </div>
+  </header>
+
+  <nav class="deck-rail" aria-label="สารบัญสไลด์">
+    <a href="#slide-0" data-label="Overview &amp; 2 PBIs" aria-current="true"></a>
+    <a href="#slide-1" data-label="Step 1: System Config"></a>
+    <a href="#slide-2" data-label="Step 2: Check T2 Prefix"></a>
+    <a href="#slide-3" data-label="Step 3: In-App Mock (Hire)"></a>
+    <a href="#slide-4" data-label="Step 4: Update Birthday UI"></a>
+    <a href="#slide-5" data-label="Step 5: Location Dynamic Scenario"></a>
+    <a href="#slide-6" data-label="Summary Checklist"></a>
+  </nav>
+
+  <main class="deck">
+    <!-- SLIDE 0: SPRINT OVERVIEW (PBI 1 & PBI 2) -->
+    <section class="slide slide-hero is-active" id="slide-0">
+      <div class="slide-number" aria-hidden="true">01</div>
+      <div class="slide-shell">
+        <div class="kicker reveal">Sprint Deliverables · 2 PBIs Scope</div>
+        <h1 class="hero-title reveal">Cognito Integration <em>Upgrades</em></h1>
+        <p class="hero-lead reveal">ยกระดับการเชื่อมโยงระบบพนักงานสู่ AWS Cognito ให้ยืดหยุ่นราย Tenant และข้อมูลอัตลักษณ์ครบถ้วนขึ้น</p>
+
+        <div class="pitch-grid reveal">
+          <!-- Card PBI 1 -->
+          <div class="pitch-card pitch-card-pbi1">
+            <span class="pitch-badge pitch-badge-pbi1">PBI 01 · Decouple Architecture</span>
+            <h3 class="pitch-headline">Configurable <em>Username Prefix</em></h3>
+            
+            <div class="compare-box old">
+              <span class="compare-tag">Old</span>
+              <span><strong>Hard-coded Tenant:</strong> ผูกติดชื่อตรง ๆ แก้ไขไม่ได้ เสี่ยงชื่อยาวหรือชนกัน</span>
+            </div>
+
+            <div class="compare-box new">
+              <span class="compare-tag">New</span>
+              <span><strong>System config DB Prefix:</strong> แยก Config อิสระราย Tenant</span>
+            </div>
+
+            <div class="deliverables-chips">
+              <span class="deliverable-chip">✓ Dynamic Lookup</span>
+              <span class="deliverable-chip">✓ Format Validation</span>
+              <span class="deliverable-chip">✓ Zero Retroactive Risk</span>
+            </div>
+          </div>
+
+          <!-- Card PBI 2 -->
+          <div class="pitch-card pitch-card-pbi2">
+            <span class="pitch-badge pitch-badge-pbi2">PBI 02 · Identity Enrichment</span>
+            <h3 class="pitch-headline">Sync <em>Birthdate &amp; Address</em></h3>
+            
+            <div class="compare-box old">
+              <span class="compare-tag">Old</span>
+              <span><strong>Missing Standard Profile:</strong> ข้อมูลวันเกิดและสถานที่ทำงานยังไม่ Sync สู่ Cognito</span>
+            </div>
+
+            <div class="compare-box new">
+              <span class="compare-tag">New</span>
+              <span><strong>2 New Attributes:</strong> ส่ง <code>birthdate</code> (YYYY-MM-DD) และ <code>address</code> (Location/HQ)</span>
+            </div>
+
+            <div class="deliverables-chips">
+              <span class="deliverable-chip">✓ Source Mapping</span>
+              <span class="deliverable-chip">✓ Create/Update API</span>
+              <span class="deliverable-chip">✓ In-App Pipeline Event</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="button-row reveal" style="margin-top: 32px;">
+          <a class="button button-primary button-hero" href="#slide-1">เริ่ม Walkthrough Demo (Step 1) <span aria-hidden="true">↓</span></a>
+        </div>
+      </div>
+    </section>
+
+    <!-- STEP 1: SYSTEM CONFIG -->
+    <section class="slide slide-dark" id="slide-1">
+      <div class="slide-number" aria-hidden="true">02</div>
+      <div class="slide-shell">
+        <div class="kicker reveal">Step 1 · Configuration State (PBI 01)</div>
+        <h2 class="reveal">เพิ่ม config - <em>cognitoUsernamePrefix</em></h2>
+        <p class="lead reveal">ตรวจสอบว่าปัจจุบันมีการตั้งค่า <code>cognitoUsernamePrefix</code> ประจำ Tenant ในตาราง <code>system_config</code> เพื่อใช้กำหนด Prefix แทนการ Hard-code ชื่อ Tenant แล้วหรือยัง</p>
+
+        <div class="two-col-layout reveal">
+          <div class="sandbox-card">
+            <h3>ตรวจสอบ Config ประจำ Tenant</h3>
+            <p style="color: rgba(255,255,255,.7); font-size: 13px; line-height: 1.6;">
+              ค้นหา <code>cognitoUsernamePrefix</code> ของ Tenant เพื่อยืนยันว่าผลลัพธ์ดึงค่า <code>config_value</code> เป็น <strong>"demo"</strong> มาใช้ต่อกับ Employee ID แทนชื่อ Tenant เดิม
+            </p>
+            <div class="demo-badge-banner">
+              <strong>TARGET CONFIG VALUE: "demo"</strong>
+            </div>
+            <div class="button-row">
+              <button class="button button-primary" onclick="copySnippet('sql-step1')">Copy SQL Query</button>
+            </div>
+          </div>
+
+          <div style="display: grid; gap: 14px;">
+            <div class="code-terminal">
+              <div class="terminal-head">
+                <span class="dots"><i></i><i></i><i></i></span>
+                <span>PostgreSQL · system_config_query.sql</span>
+                <button class="button-copy" onclick="copySnippet('sql-step1')">Copy</button>
+              </div>
+              <pre id="sql-step1">SELECT
+	system_config.* 
+FROM
+	system_config 
+WHERE
+	system_config.config_name = 'cognitoUsernamePrefix' 
+	AND tenant_uuid = '0bbf080f-9cec-410f-acf0-2b755484c516'</pre>
+            </div>
+
+            <div class="code-terminal" style="background: #0f172a; border-color: rgba(255, 255, 255, .15);">
+              <div class="terminal-head" style="background: #1e293b; color: #94a3b8;">
+                <span class="dots"><i></i><i></i><i></i></span>
+                <span>Query Result · 1 Row Fetched</span>
+                <span style="color: var(--acid); font-family: var(--display); font-size: 9px;">SUCCESS</span>
+              </div>
+              <div style="padding: 14px; overflow-x: auto;">
+                <table style="width: 100%; border-collapse: collapse; font-family: var(--mono); font-size: 11px; text-align: left;">
+                  <thead>
+                    <tr style="border-bottom: 1px solid rgba(255, 255, 255, .2); color: #94a3b8;">
+                      <th style="padding: 6px 10px;">tenant_uuid</th>
+                      <th style="padding: 6px 10px;">config_name</th>
+                      <th style="padding: 6px 10px; color: var(--acid);">config_value</th>
+                      <th style="padding: 6px 10px;">description</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr style="color: #e2e8f0; background: rgba(255, 255, 255, .03);">
+                      <td style="padding: 8px 10px; white-space: nowrap;">0bbf080f-9cec-410f-acf0-2b755484c516</td>
+                      <td style="padding: 8px 10px; white-space: nowrap;">cognitoUsernamePrefix</td>
+                      <td style="padding: 8px 10px; white-space: nowrap; color: var(--acid); font-weight: bold; background: rgba(217, 255, 67, .12); border-radius: 4px;">"demo"</td>
+                      <td style="padding: 8px 10px; white-space: nowrap; color: #64748b;">Prefix identifier for Cognito</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- STEP 2: VERIFY T2 PREFIX -->
+    <section class="slide slide-paper" id="slide-2">
+      <div class="slide-number" aria-hidden="true">03</div>
+      <div class="slide-shell">
+        <div class="kicker reveal">Step 2 · Pre-State Validation (PBI 01)</div>
+        <h2 class="reveal">เปิด T2 Prefix AWS Cognito</h2>
+        <p class="lead reveal">เปิดดูที่ AWS Cognito User Pools <code>bluecollar-nonprd</code> เพื่อเป็น Baseline ว่ายังไม่เคยมี User ที่ถูกสร้างด้วย Prefix <code>demo_</code> มาก่อน</p>
+
+        <div class="two-col-layout reveal">
+          <div class="sandbox-card">
+            <h3 style="color: var(--ink);">AWS Cognito User Pool: bluecollar-nonprd</h3>
+            <p style="color: var(--muted); font-size: 13px; line-height: 1.6;">
+              ตรวจสอบรายชื่อ User ใน AWS Cognito User Pool <code>bluecollar-nonprd</code> ของ Tenant T2 เพื่อยืนยันว่ายังไม่เคยมี Username ที่ขึ้นต้นด้วย prefix นี้ เป็น baseline ยืนยันสถานะก่อนยิง event เข้าสู่ระบบ
+            </p>
+            <div class="demo-badge-banner">
+              <strong>STATE: NO PREFIX EXIST IN COGNITO</strong>
+            </div>
+          </div>
+
+          <div class="code-terminal" style="background: #0f172a; border-color: rgba(19, 32, 58, .2);">
+            <div class="terminal-head" style="background: #1e293b; color: #94a3b8;">
+              <span class="dots"><i></i><i></i><i></i></span>
+              <span>AWS Management Console · Cognito &gt; User pools &gt; bluecollar-nonprd</span>
+              <span style="color: var(--mint); font-family: var(--display); font-size: 9px;">● CONNECTED</span>
+            </div>
+            <div style="padding: 24px; font-family: var(--sans);">
+              <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,.1); padding-bottom: 14px; margin-bottom: 18px;">
+                <div>
+                  <span style="color: #94a3b8; font-size: 10px; text-transform: uppercase; font-family: var(--display); letter-spacing: .05em;">User Pool Name</span>
+                  <strong style="display: block; color: white; font-size: 15px; margin-top: 2px;">bluecollar-nonprd</strong>
+                </div>
+                <div style="background: rgba(255,255,255,.08); padding: 6px 14px; border-radius: 6px; font-family: var(--mono); font-size: 11px; color: #cbd5e1;">
+                  Filter: Username ^= "demo_"
+                </div>
+              </div>
+
+              <div style="background: rgba(0,0,0,.25); border: 1px dashed rgba(255,255,255,.15); border-radius: 8px; padding: 40px 20px; text-align: center;">
+                <div style="display: inline-grid; place-items: center; width: 48px; height: 48px; border-radius: 50%; background: rgba(255,255,255,.05); margin-bottom: 12px;">
+                  <span style="color: #94a3b8; font-size: 20px;">🔍</span>
+                </div>
+                <strong style="display: block; color: white; font-family: var(--display); font-size: 15px;">No users found</strong>
+                <p style="color: #64748b; font-size: 12px; margin-top: 6px; margin-bottom: 0;">
+                  ยังไม่เคยมีการสร้าง user ที่มี prefix นี้ในระบบ bluecollar-nonprd
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- STEP 3: MOCK IN APP HIRE EVENT -->
+    <section class="slide slide-dark" id="slide-3">
+      <div class="slide-number" aria-hidden="true">04</div>
+      <div class="slide-shell">
+        <div class="kicker reveal">Step 3 · Pipeline Trigger (PBI 01 &amp; PBI 02)</div>
+        <h2 class="reveal">Mock In-App Event <em>(Hire)</em></h2>
+        <p class="lead reveal">จำลอง Event การรับพนักงานใหม่ (Hire) พร้อมข้อมูลเริ่มต้นเข้าตาราง <code>in_app_message</code> สถานะ pending เพื่อให้ Consumer ประมวลผลและสร้าง Cognito User พร้อม Prefix ใหม่และ Attributes</p>
+
+        <div class="two-col-layout reveal">
+          <div class="sandbox-card">
+            <h3>Payload Execution Details</h3>
+            <p style="color: rgba(255,255,255,.7); font-size: 13px; line-height: 1.6;">
+              Employee: <code>10363409</code><br>
+              Entity ID: <code>84945310-e073-5f1f-842e-2600643d3b7d</code><br>
+              Target Username: <code>demo10363409</code> (PBI 1: Prefix จาก config)<br>
+              Initial Attributes: <code>dateOfBirthEncrypted</code> พร้อมส่ง Sync (PBI 2)
+            </p>
+            <div class="demo-badge-banner">
+              <strong>COGNITO TARGET: demo10363409</strong>
+            </div>
+            <div class="button-row">
+              <button class="button button-primary" onclick="copySnippet('sql-step3')">Copy SQL Insert</button>
+            </div>
+          </div>
+
+          <div class="code-terminal">
+            <div class="terminal-head">
+              <span class="dots"><i></i><i></i><i></i></span>
+              <span>Insert In-App Message (Pending)</span>
+              <button class="button-copy" onclick="copySnippet('sql-step3')">Copy</button>
+            </div>
+            <pre id="sql-step3">INSERT INTO "core_t2"."in_app_message" (
+    "uuid",
+    "entity_type",
+    "entity_id",
+    "event_name",
+    "error_message",
+    "message_payload",
+    "status",
+    "created_at",
+    "updated_at",
+    "last_processed_at",
+    "attempt"
+) VALUES (
+    gen_random_uuid(),
+    'employee_profile',
+    '84945310-e073-5f1f-842e-2600643d3b7d',
+    'employee_profile.data_change_cognito',
+    NULL,
+    '{"after": {"isActive": true, "lastName": "LN10363409", "firstName": "LN10363409", "seniorityDate": "2026-06-08", "timeProfileUuid": "878e842a-4cbd-571e-a00c-37beae52ae76", "currentStartDate": "2026-06-08", "workScheduleUuid": "2c8d9dd8-a879-5f16-8cad-767789dd0fb1", "employeeClassUuid": "e8623af7-1698-565e-a799-1119b07bc740", "corporateLevelUuid": "f88acfbb-ad35-56b2-9f43-1b5e23fa35f8", "holidayCalendarUuid": "6aa3e9cb-46c3-5457-96ad-e1d1c8cf2654", "dateOfBirthEncrypted": "kpH2gyHglR5F5q97LKeiz85h+AvHb0AEHdI=:OFHxubewr+Ne74ni9L0yJg==:4FMB6TTplAFHNIC/QC/5xA==:0"}, "before": null, "updatedAt": "2026-06-25T08:16:18.067Z", "updatedBy": "system", "employeeId": "10363409", "personUuid": "84945310-e073-5f1f-842e-2600643d3b7d", "changeEvent": "hire", "employmentUuid": "84945310-e073-5f1f-842e-2600643d3b7d", "jobEffectiveStart": "2026-06-08T00:00:00.000Z"}',
+    'pending',
+    NOW(),
+    NOW(),
+    NULL,
+    0
+);</pre>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- STEP 4: UPDATE DATE OF BIRTH UI -->
+    <section class="slide slide-paper" id="slide-4">
+      <div class="slide-number" aria-hidden="true">05</div>
+      <div class="slide-shell">
+        <div class="kicker reveal">Step 4 · Employee Data Action (PBI 02)</div>
+        <h2 class="reveal">อัปเดต Date of Birth จริงผ่านเมนู employee-data</h2>
+        <p class="lead reveal">จำลองการเข้าแก้ไขวันเกิดผ่านหน้าจอ Admin Center เพื่อสังเกตการณ์ Event การปรับปรุงข้อมูลส่วนบุคคล (Attribute <code>birthdate</code>) ส่งต่อไปยัง Cognito</p>
+
+        <div class="two-col-layout reveal">
+          <div class="sandbox-card">
+            <h3 style="color: var(--ink);">ระบบ Worklife Admin Center</h3>
+            <p style="color: var(--muted); font-size: 13px; line-height: 1.6;">
+              เข้าใช้งานระบบจริงเพื่อปรับปรุงวันเกิดของพนักงาน <code>10363409</code> ระบบจะสร้าง Event เข้ารหัสข้อมูล <code>dateOfBirthEncrypted</code> และส่งเข้าสู่ In-App Message เพื่อ Trigger Pipeline ส่งเข้าสู่ Cognito
+            </p>
+
+            <div class="button-row" style="margin-top: 20px;">
+              <a class="button button-primary" href="https://core-dev.smarthrworklife.com/t2/app/admin-center/employee-data/84945310-e073-5f1f-842e-2600643d3b7d/profile?tab=personal" target="_blank" rel="noopener noreferrer">
+                <span>เปิดหน้าจอ Employee Data จริง</span>
+                <span aria-hidden="true">↗</span>
+              </a>
+              <button class="button button-dark" onclick="copySnippet('json-dob-preview')">Copy Sample Payload</button>
+            </div>
+          </div>
+
+          <div class="portal-preview-card">
+            <div class="portal-nav-bar">
+              <div class="portal-nav-links">
+                <span class="portal-nav-link active">Personal ▾</span>
+                <span class="portal-nav-link">Employment ▾</span>
+                <span class="portal-nav-link">Compensation ▾</span>
+              </div>
+              <span style="font-size: 11px; color: #94a3b8;">10003540@cpf.co.th</span>
+            </div>
+
+            <div class="portal-section-card">
+              <div class="portal-section-header">
+                <span class="portal-section-title">Biographical information</span>
+                <a href="https://core-dev.smarthrworklife.com/t2/app/admin-center/employee-data/84945310-e073-5f1f-842e-2600643d3b7d/profile?tab=personal" target="_blank" class="portal-btn-edit">
+                  ✎ Edit
+                </a>
+              </div>
+
+              <div class="portal-grid-fields">
+                <div>
+                  <div class="portal-field-label">Person ID</div>
+                  <div class="portal-field-value">10363409</div>
+                </div>
+                <div>
+                  <div class="portal-field-label">Date of birth</div>
+                  <div class="portal-field-value" style="color: #2563eb;">View</div>
+                </div>
+                <div>
+                  <div class="portal-field-label">Age</div>
+                  <div class="portal-field-value" style="color: #2563eb;">View</div>
+                </div>
+                <div>
+                  <div class="portal-field-label">Ethnicity</div>
+                  <div class="portal-field-value">N/A (NA)</div>
+                </div>
+              </div>
+
+              <div style="margin-top: 14px; padding-top: 10px; border-top: 1px solid #f1f5f9; font-size: 10px; color: #94a3b8;">
+                Update by 10003540 on 10/09/2026 21:34 (GMT+7)
+              </div>
+            </div>
+
+            <div class="code-terminal" style="margin: 16px; border-radius: 8px;">
+              <div class="terminal-head">
+                <span class="dots"><i></i><i></i><i></i></span>
+                <span>Expected Event Payload (Encrypted)</span>
+                <button class="button-copy" onclick="copySnippet('json-dob-preview')">Copy</button>
+              </div>
+              <pre id="json-dob-preview">{
+  "after": {
+    "dateOfBirthEncrypted": "kpH2gyHglR5F5q97LKeiz85h+AvHb0AEHdI=:OFHxubewr+Ne74ni9L0yJg==:4FMB6TTplAFHNIC/QC/5xA==:0"
+  },
+  "before": null,
+  "updatedAt": "2026-09-10T14:34:00.000Z",
+  "updatedBy": "10003540",
+  "employeeId": "10363409",
+  "personUuid": "84945310-e073-5f1f-842e-2600643d3b7d",
+  "changeEvent": "update",
+  "employmentUuid": "84945310-e073-5f1f-842e-2600643d3b7d"
+}</pre>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- STEP 5: DYNAMIC LOCATION DROPDOWN & SQL GENERATOR -->
+    <section class="slide slide-dark" id="slide-5">
+      <div class="slide-number" aria-hidden="true">06</div>
+      <div class="slide-shell">
+        <div class="kicker reveal">Step 5 · Interactive Master Selection (PBI 02)</div>
+        <h2 class="reveal">Dynamic <em>Location Update</em></h2>
+        <p class="lead reveal">จำลองการอัปเดตสถานที่ทำงาน (Attribute <code>address</code>) จาก Master Location: ตรวจสอบข้อมูลเดิม → UPDATE ตาราง <code>employee_profile</code> → และสร้าง Event บันทึกเข้า <code>in_app_message</code></p>
+
+        <div class="two-col-layout reveal">
+          <div class="sandbox-card">
+            <h3>เลือก Master Location ปลายทาง</h3>
+            
+            <div class="form-group">
+              <label>Location เดิม (Before)</label>
+              <input class="form-control" type="text" value="0dc01899-ec0d-590b-9e15-91d6d8230793 (Current Old Location)" disabled>
+            </div>
+
+            <div class="form-group">
+              <label>เลือก Master Location ใหม่ (After - 20 Items)</label>
+              <select class="form-control" id="location-selector" onchange="renderLocationScripts()">
+                <option value="42ba3fca-ed5b-56ba-8f24-6e87af8783bb" selected>Head Office</option>
+                <option value="e336ee7f-d6c2-57ff-bb45-d397b650076b">Kluang Broiler Hatchery</option>
+                <option value="bc7dfbfc-7436-51a5-9dff-efe46b056977">Sg. Sayong Breeder Hatchery</option>
+                <option value="7a929128-f3ed-53ed-96d9-4869ac59b8de">Ulu Tiram Integration Office</option>
+                <option value="25155962-9d55-5ec3-b912-31ffeab79ee7">Pontian Slaughterhouse Outsource</option>
+                <option value="2c4e6b89-d2c8-5942-86ca-be7a9b7e6eff">An Xin Taman Aman</option>
+                <option value="1f39abe3-9f5e-5446-8666-c1b8675f0a96">An Xin Taman Intan</option>
+                <option value="fee8f42f-a71e-567f-9482-0f6c9d3969ad">Lotus's Desa Tebrau</option>
+                <option value="aa2e07e4-f8cf-5923-bc77-b53c861f1720">Lotus's Bukit Indah</option>
+                <option value="1f797f38-2eec-5ad1-92f1-f7ec2eb24701">Lotus's Kluang</option>
+                <option value="11f72f7b-9061-53d0-955e-ad5336c26a2c">Lotus's Muar</option>
+                <option value="0c030c64-0577-53ab-925a-a00dced33244">Lotus's Mutiara Rini</option>
+                <option value="b4102ef2-c165-5e31-b388-0c6744144ff5">Lotus's Seri Alam</option>
+                <option value="2c278f6f-6664-5338-8b64-cd008014e6d5">Lotus's Setia Tropika</option>
+                <option value="406873bd-59da-508e-8cc2-b002e41fd705">Kulim Slaughterhouse Outsource</option>
+                <option value="d9d8f78b-8cf6-5904-894a-3120de522287">Lotus's Cheras</option>
+                <option value="e3d21574-ba6e-55b6-9414-3d5c5f36f6a4">Lotus's IOI City Mall</option>
+                <option value="a458323d-4c70-530b-b136-f8b7872c4cd8">An Xin Alam Damai</option>
+                <option value="54aaf047-9f46-543f-8756-5dfb12b6d50e">Trat Promotion Project</option>
+                <option value="87e94525-93ff-565c-bf61-785bbf243a0f">C.P. Viet Nam - Trai Long Tan</option>
+              </select>
+            </div>
+
+            <div class="button-row">
+              <button class="button button-primary" onclick="copySnippet('dynamic-emp-update')">Copy Update employee_profile</button>
+              <button class="button button-secondary" onclick="copySnippet('dynamic-sql')">Copy Insert in_app_message</button>
+              <button class="button button-dark" onclick="copySnippet('dynamic-json')">Copy JSON Payload</button>
+            </div>
+          </div>
+
+          <div style="display: grid; gap: 14px;">
+            <!-- 5.1: Select Profile with JOIN Location Name -->
+            <div class="code-terminal">
+              <div class="terminal-head">
+                <span class="dots"><i></i><i></i><i></i></span>
+                <span>1. Verify Current Profile with Location Name</span>
+                <button class="button-copy" onclick="copySnippet('sql-emp-select')">Copy</button>
+              </div>
+              <pre id="sql-emp-select">SELECT
+    ep.employment_uuid,
+    ep.location_uuid,
+    loc.name AS location_name,
+    loc.*
+FROM
+    "employee_profile" ep
+LEFT JOIN "location" loc 
+    ON ep.location_uuid = loc.uuid
+WHERE
+    ep.employment_uuid = '84945310-e073-5f1f-842e-2600643d3b7d';</pre>
+            </div>
+
+            <!-- 5.2: Dynamic UPDATE Profile -->
+            <div class="code-terminal">
+              <div class="terminal-head">
+                <span class="dots"><i></i><i></i><i></i></span>
+                <span>2. Dynamic UPDATE employee_profile</span>
+                <button class="button-copy" onclick="copySnippet('dynamic-emp-update')">Copy</button>
+              </div>
+              <pre id="dynamic-emp-update"></pre>
+            </div>
+
+            <!-- 5.3: Dynamic JSON Payload -->
+            <div class="code-terminal">
+              <div class="terminal-head">
+                <span class="dots"><i></i><i></i><i></i></span>
+                <span>3. Dynamic Message Payload (JSON)</span>
+                <button class="button-copy" onclick="copySnippet('dynamic-json')">Copy</button>
+              </div>
+              <pre id="dynamic-json"></pre>
+            </div>
+
+            <!-- 5.4: Dynamic INSERT In App Message -->
+            <div class="code-terminal">
+              <div class="terminal-head">
+                <span class="dots"><i></i><i></i><i></i></span>
+                <span>4. Dynamic INSERT in_app_message (PostgreSQL)</span>
+                <button class="button-copy" onclick="copySnippet('dynamic-sql')">Copy</button>
+              </div>
+              <pre id="dynamic-sql"></pre>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- STEP 6: SUMMARY CHECKLIST -->
+    <section class="slide slide-blue" id="slide-6">
+      <div class="slide-number" aria-hidden="true">07</div>
+      <div class="slide-shell">
+        <div class="kicker reveal">Sprint Verification · Complete</div>
+        <h2 class="reveal">สรุปรายการทดสอบสำหรับ Demo</h2>
+        <p class="lead reveal">รายการตรวจสอบหลักฐานก่อนสรุปส่งมอบในรอบ Sprint Review สำหรับทั้ง 2 PBIs</p>
+
+        <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; margin-top: 32px;" class="reveal">
+          <div class="sandbox-card" style="background: rgba(255,255,255,.08);">
+            <strong style="color: var(--acid); font-family: var(--display); font-size: 14px;">01. Config Prefix (PBI 1)</strong>
+            <p style="margin-top: 8px; font-size: 12px; line-height: 1.6; opacity: .8;">ตรวจสอบ key ใน system_config พบค่า "demo" ชัดเจน API นำไปต่อ Username สำเร็จ</p>
+          </div>
+          <div class="sandbox-card" style="background: rgba(255,255,255,.08);">
+            <strong style="color: var(--acid); font-family: var(--display); font-size: 14px;">02. Attributes Sync (PBI 2)</strong>
+            <p style="margin-top: 8px; font-size: 12px; line-height: 1.6; opacity: .8;">ส่ง birthdate (YYYY-MM-DD) และ address (Location) ไปยัง Cognito User สมบูรณ์</p>
+          </div>
+          <div class="sandbox-card" style="background: rgba(255,255,255,.08);">
+            <strong style="color: var(--acid); font-family: var(--display); font-size: 14px;">03. Real-time Cognito</strong>
+            <p style="margin-top: 8px; font-size: 12px; line-height: 1.6; opacity: .8;">เมื่อ Consumer รันเสร็จสิ้น User บน AWS Cognito แสดงผล Prefix และ Attributes ครบถ้วน</p>
+          </div>
+        </div>
+
+        <div class="button-row reveal" style="margin-top: 36px;">
+          <a class="button button-primary" href="#slide-0">กลับไปเริ่มต้นใหม่ ↺</a>
+          <button class="button button-secondary" onclick="copySnippet('dynamic-sql')">คัดลอก SQL ล่าสุด</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <p class="keyboard-hint" aria-hidden="true">Navigate with ↑ ↓ · Page Up / Page Down</p>
+
+  <div class="deck-controls" aria-label="ตัวควบคุมสไลด์">
+    <button id="previous-slide" type="button" aria-label="สไลด์ก่อนหน้า" disabled>↑</button>
+    <button id="next-slide" type="button" aria-label="สไลด์ถัดไป">↓</button>
+  </div>
+
+  <script>
+    const slides = Array.from(document.querySelectorAll(".slide"));
+    const railLinks = Array.from(document.querySelectorAll(".deck-rail a"));
+    const currentSlide = document.getElementById("current-slide");
+    const totalSlides = document.getElementById("total-slides");
+    const progressBar = document.getElementById("deck-progress-bar");
+    const previousButton = document.getElementById("previous-slide");
+    const nextButton = document.getElementById("next-slide");
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    let activeIndex = 0;
+    let frameRequested = false;
+
+    totalSlides.textContent = String(slides.length).padStart(2, "0");
+
+    function updateDeck(index) {
+      activeIndex = Math.max(0, Math.min(index, slides.length - 1));
+      currentSlide.textContent = String(activeIndex + 1).padStart(2, "0");
+      progressBar.style.width = ((activeIndex + 1) / slides.length * 100) + "%";
+      previousButton.disabled = activeIndex === 0;
+      nextButton.disabled = activeIndex === slides.length - 1;
+
+      slides.forEach((slide, idx) => slide.classList.toggle("is-active", idx === activeIndex));
+      railLinks.forEach((link, idx) => {
+        if (idx === activeIndex) link.setAttribute("aria-current", "true");
+        else link.removeAttribute("aria-current");
+      });
+    }
+
+    function findClosestSlide() {
+      const viewportCenter = window.innerHeight / 2;
+      let closestIndex = 0;
+      let closestDistance = Infinity;
+
+      slides.forEach((slide, index) => {
+        const rect = slide.getBoundingClientRect();
+        const slideCenter = rect.top + Math.min(rect.height, window.innerHeight) / 2;
+        const distance = Math.abs(slideCenter - viewportCenter);
+        if (distance < closestDistance) {
+          closestDistance = distance;
+          closestIndex = index;
+        }
+      });
+
+      updateDeck(closestIndex);
+      frameRequested = false;
+    }
+
+    function requestDeckUpdate() {
+      if (frameRequested) return;
+      frameRequested = true;
+      window.requestAnimationFrame(findClosestSlide);
+    }
+
+    function goToSlide(index) {
+      const target = slides[Math.max(0, Math.min(index, slides.length - 1))];
+      target.scrollIntoView({ behavior: reducedMotion ? "auto" : "smooth", block: "start" });
+    }
+
+    previousButton.addEventListener("click", () => goToSlide(activeIndex - 1));
+    nextButton.addEventListener("click", () => goToSlide(activeIndex + 1));
+
+    document.addEventListener("keydown", (e) => {
+      const tag = document.activeElement && document.activeElement.tagName;
+      if (tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT") return;
+
+      if (e.key === "ArrowDown" || e.key === "ArrowRight" || e.key === "PageDown") {
+        e.preventDefault();
+        goToSlide(activeIndex + 1);
+      }
+      if (e.key === "ArrowUp" || e.key === "ArrowLeft" || e.key === "PageUp") {
+        e.preventDefault();
+        goToSlide(activeIndex - 1);
+      }
+      if (e.key === "Home") {
+        e.preventDefault();
+        goToSlide(0);
+      }
+      if (e.key === "End") {
+        e.preventDefault();
+        goToSlide(slides.length - 1);
+      }
+    });
+
+    window.addEventListener("scroll", requestDeckUpdate, { passive: true });
+    window.addEventListener("resize", requestDeckUpdate);
+    findClosestSlide();
+
+    function copySnippet(elementId) {
+      const text = document.getElementById(elementId).innerText;
+      navigator.clipboard.writeText(text).then(() => {
+        const toast = document.getElementById("toast");
+        toast.style.display = "block";
+        setTimeout(() => { toast.style.display = "none"; }, 1800);
+      });
+    }
+
+    function renderLocationScripts() {
+      const select = document.getElementById("location-selector");
+      const selectedUuid = select.value;
+      const oldUuid = "0dc01899-ec0d-590b-9e15-91d6d8230793";
+      const targetEmploymentUuid = "84945310-e073-5f1f-842e-2600643d3b7d";
+
+      const empUpdateSql = `UPDATE "core_t2"."employee_profile"
+SET 
+    "location_uuid" = '${selectedUuid}',
+    "updated_at" = NOW()
+WHERE 
+    "employment_uuid" = '${targetEmploymentUuid}';`;
+
+      const payloadObj = {
+        "after": {
+          "locationUuid": selectedUuid
+        },
+        "before": {
+          "locationUuid": oldUuid
+        },
+        "updatedAt": "2026-09-07T07:34:57.238Z",
+        "updatedBy": "system",
+        "employeeId": "10363409",
+        "personUuid": targetEmploymentUuid,
+        "changeEvent": "update",
+        "employmentUuid": targetEmploymentUuid,
+        "jobEffectiveStart": "2025-06-01T00:00:00.000Z"
+      };
+
+      const jsonString = JSON.stringify(payloadObj, null, 2);
+      const singleLineJson = JSON.stringify(payloadObj);
+
+      const inAppSql = `INSERT INTO "core_t2"."in_app_message" (
+    "uuid",
+    "entity_type",
+    "entity_id",
+    "event_name",
+    "error_message",
+    "message_payload",
+    "status",
+    "created_at",
+    "updated_at",
+    "last_processed_at",
+    "attempt"
+) VALUES (
+    gen_random_uuid(),
+    'employee_profile',
+    '${targetEmploymentUuid}',
+    'employee_profile.data_change_cognito',
+    NULL,
+    '${singleLineJson}',
+    'pending',
+    NOW(),
+    NOW(),
+    NULL,
+    0
+);`;
+
+      document.getElementById("dynamic-emp-update").innerText = empUpdateSql;
+      document.getElementById("dynamic-json").innerText = jsonString;
+      document.getElementById("dynamic-sql").innerText = inAppSql;
+    }
+
+    renderLocationScripts();
+  </script>
+</body>
+
+</html>

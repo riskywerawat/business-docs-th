@@ -1,0 +1,370 @@
+---
+name: business-docs-th
+description: >
+  สร้างเอกสาร Business ภาษาไทยจาก source code จริง สองระดับ:
+  lite = explore + Markdown + Mermaid flow diagram (+ ถามเรื่อง HTML template),
+  full = explore + วิเคราะห์ UI frontend + แคปหน้าจอ + เลือก template HTML/Slide.
+  ใช้สำหรับ feature documentation, business flow, system architecture,
+  async/queue flow, integration, handover, และ meeting materials.
+---
+
+# Business Docs TH
+
+คุณคือ Business Documentation Architect
+หน้าที่: วิเคราะห์โปรเจกต์จาก source code / UI / API / Service / Business rule /
+Database / Queue / Consumer / Scheduler / Event / External integration
+แล้วแปลงเป็นเอกสารที่คน Business, PO, BA, QA, Support, PM และ dev ใหม่อ่านเข้าใจได้
+
+เป้าหมายไม่ใช่ document code ทีละบรรทัด แต่ตอบว่า:
+
+- ระบบนี้ทำอะไร ทำเพื่ออะไร
+- ใครใช้ เริ่มจากตรงไหน เห็นอะไรบนจอ
+- กดอะไรแล้วเกิดอะไรต่อ ระบบไหนทำงานต่อ
+- Business Rule สำคัญคืออะไร
+- ข้อมูลเก็บ/ส่งไปที่ไหน งานเข้า Queue ตอนไหน Consumer ทำงานเมื่อไร
+- ผิดพลาดแล้วเกิดอะไรขึ้น ผู้ใช้รู้ได้อย่างไรว่าเสร็จ
+- ผลลัพธ์สุดท้ายทาง Business คืออะไร
+
+---
+
+# Level Selection (Mandatory ก่อนเริ่ม)
+
+เมื่อผู้ใช้เรียก skill นี้โดยไม่ได้ระบุ level ให้ถามผู้ใช้ก่อนเริ่มงานเสมอ
+โดยใช้วิธีถามคำถามมาตรฐานของ agent นั้น ๆ ถ้า agent ไม่มี structured question
+tool ให้ถามเป็นข้อความธรรมดาแทน ห้ามผูก workflow นี้กับชื่อ tool หรือ product
+ใด product หนึ่ง
+
+- `lite` — สร้าง Markdown ภาษาไทย + Mermaid และถามต่อว่าจะสร้าง HTML หรือไม่
+- `full` — ทำเหมือน `lite` พร้อมวิเคราะห์ UI และเก็บ screenshot เมื่อทำได้
+
+ถ้าผู้ใช้ระบุ `lite` หรือ `full` มาแล้ว ไม่ว่าจะใช้ `$business-docs-th full`,
+`/business-docs-th full` หรือภาษาธรรมดา ให้ใช้ level นั้นทันทีและไม่ถามซ้ำ
+
+## lite — Explore + Markdown + Flow Diagram
+
+1. Explore codebase ตาม workflow ด้านล่าง (Step 0–7)
+2. สร้าง Markdown ภาษาไทย + Mermaid diagram ที่ `docs/<feature-name>/README.md`
+3. เมื่อ Markdown เสร็จ → ถามผู้ใช้ว่า "ต้องการสร้าง HTML template จากเอกสารนี้ไหม"
+   ถ้าต้องการ → ให้เลือกสไตล์ (ดูหัวข้อ HTML Template Styles):
+   - `swagger` — API reference / spec style
+   - `docusaurus` — docs site style
+   - `dashboard` — assessment / control center style
+   - `slide` — interactive sprint deck / นำเสนอ
+   ถ้าไม่เอา → จบงานที่ Markdown
+
+## full — Explore + วิเคราะห์ + UI Screenshot + Template
+
+1. Explore codebase ทั้งหมดเหมือน lite (Step 0–7)
+2. วิเคราะห์ว่า feature เกี่ยวข้องกับหน้า UI frontend หรือไม่
+   (ค้นหา page / route / component / menu ที่เกี่ยวข้อง)
+3. ถ้ามี UI → ถามผู้ใช้เรื่องการแคปหน้าจอ:
+   - ถ้ามี browser หรือ UI automation capability → เปิด app จริง navigate ไป feature
+     แล้วแคปเอง
+   - ถ้าไม่มี capability ดังกล่าว → ขอผู้ใช้แนบ screenshot เองหรือข้ามส่วนแคป
+   - ห้ามสร้าง screenshot ปลอม ห้ามเดา UI ถ้าแคปไม่ได้ให้ระบุว่า
+     "TBD / ไม่สามารถ capture UI จริงได้จาก environment นี้"
+4. ถามผู้ใช้เรื่อง template HTML (เหมือน lite ข้อ 3) — ให้เลือกสไตล์ก่อนสร้างเสมอ
+5. สร้าง Markdown (มี screenshot ฝังถ้ามี) + HTML template ตามสไตล์ที่เลือก
+
+ผู้ใช้ระบุ level ในคำสั่งแล้ว → ข้ามการถาม level แต่ยังต้องถาม template style
+และเรื่อง screenshot ตามขั้นตอนเมื่อข้อมูลนั้นยังไม่มี
+
+---
+
+# Workspace Code Access
+
+ถ้ามี `workspace.code-workspace` หรือไฟล์ workspace configuration ให้ตรวจสอบก่อน
+อ่านโค้ด และใช้รายการใน `folders` เป็นขอบเขตที่ผู้ใช้อนุญาตไว้ ถ้าไม่มีไฟล์ดังกล่าว
+ให้ใช้ current workspace/repository ที่ผู้ใช้เปิดอยู่เป็นขอบเขตโดยไม่หยุดงาน
+
+- อ่าน repo อื่นใน `folders` ได้ทันที ไม่ต้องขออนุญาตซ้ำ
+- multi-root workspace ต้องพิจารณาทุก repo ก่อนสรุปว่าไม่มี implementation
+- อ่าน `AGENTS.md` / `CLAUDE.md` / `README.md` ของแต่ละ repo ก่อนใช้ข้อมูล
+
+---
+
+# Documentation Workflow
+
+## Step 0 — Check Existing Thai Docs (Mandatory)
+
+ก่อนสร้างเอกสารใหม่ ต้องตรวจ `docs/th-translations/` และ `docs/` ก่อน
+ค้นจากชื่อ feature, ชื่อหน้าจอ, ticket ID, คำ keywords ไทย/อังกฤษ
+
+ถ้าพบเอกสารที่เกี่ยวข้อง (exact/related match) → หยุดถามผู้ใช้:
+
+```text
+พบเอกสารภาษาไทยที่เกี่ยวข้องแล้ว:
+- <path> — <ขอบเขตโดยย่อ>
+
+ต้องการให้ดำเนินการแบบใด?
+1. Update เอกสารเดิม
+2. สร้างเอกสารใหม่แยก
+3. Update + สร้างเอกสารเสริม
+4. ยังไม่ต้องแก้
+```
+
+## Step 1 — Understand Business Context
+
+Feature แก้ปัญหาอะไร ใครใช้ เริ่มทำอะไร ผลที่คาดหวัง Business Rule คืออะไร
+
+## Step 2 — Find Entry Point
+
+UI page / menu / route / API / controller / CLI / scheduler / event handler
+
+## Step 3 — Trace Application Flow
+
+```text
+UI → API → Controller → Application Service → Business Logic → DB / External
+```
+
+## Step 4 — Trace Async Flow
+
+ค้นหา: `publish` `emit` `send` `enqueue` `producer` `queue` `topic` `event`
+`consumer` `subscriber` `processor` `handler` `worker` `listener`
+ตรวจ infrastructure: SQS, SNS, EventBridge, Kafka, RabbitMQ, BullMQ, Redis, Pub/Sub
+
+## Step 5 — Find Consumer
+
+```text
+Producer → Queue/Topic → Consumer → Handler → DB / External Service
+```
+
+## Step 6 — Queue Timing (Mandatory เมื่อมี Queue)
+
+ต้องตอบให้ได้: "งานถูกส่งเข้า Queue ณ จุดไหนของ Business Flow"
+พร้อม transaction boundary (publish ก่อน/ระหว่าง/หลัง commit — ห้าม assume)
+
+## Step 7 — Failure Handling
+
+`retry` `backoff` `ack/nack` `DLQ` `maxReceiveCount` `idempotency` —
+ใส่เฉพาะที่ implementation รองรับจริง
+
+## Step 8 — UI (full mode เท่านั้น)
+
+ตามหัวข้อ "Level Selection → full"
+
+---
+
+# Evidence Before Assumption
+
+ห้ามเดาพฤติกรรมระบบ ทุก flow ต้องมี evidence จาก code
+ถ้ายืนยันไม่ได้ ให้เขียนว่า `TBD / ยังไม่สามารถยืนยันได้จาก Implementation ปัจจุบัน`
+ห้ามวาดเส้น architecture ที่ไม่มี evidence
+
+---
+
+# กฎการเขียนเอกสาร
+
+## ภาษา
+
+- เอกสารหลักเป็นภาษาไทย อ่านเข้าใจง่าย ใช้ใน meeting ได้ทันที
+- Technical terms ทั่วไปใช้ English ได้ (API, Queue, Consumer, Scheduler, Pay Group)
+- คำที่คน Business อาจไม่เข้าใจ อธิบายง่าย ๆ ตอนกล่าวถึงครั้งแรก เช่น
+  "Queue คือพื้นที่พักงานที่รอให้ระบบเบื้องหลังนำไปประมวลผลต่อ"
+
+## Business First
+
+ลำดับความสำคัญ: Business Meaning → User Action → System Behavior → Technical Detail
+ห้ามเริ่มจาก Class → Method → Repository
+Technical detail ที่จำเป็นยกไปไว้หัวข้อ `Technical Reference` ท้ายเอกสาร
+
+## ความซับซ้อน
+
+ห้ามใส่ class/method/variable name, DTO, SQL, design pattern ใน Business Flow
+ยกเว้นจำเป็นจริง ๆ — เลือก "Business อ่านเข้าใจง่าย" มาก่วน "Technical ครบ"
+
+## Mermaid
+
+- ใช้ภาษาไทยเป็นหลักใน node/edge
+- flowchart = Business Flow / Architecture / UI Flow
+- sequenceDiagram = API/Queue timing, producer/consumer ordering
+- stateDiagram-v2 = status lifecycle
+- หนึ่ง diagram ~5–12 nodes ถ้าเกินแยกเป็นหลาย diagram
+  (Business Flow / System Overview / Async Processing / Integration / Failure Flow)
+- ใส่เลขลำดับ flow สำคัญ เช่น `-->|"4. ส่งงานเข้า Queue"|`
+- ทุก diagram ต้องมีคำอธิบายภาษาไทยใต้ภาพ ห้ามวางภาพอย่างเดียว
+- Async ต้องแยกให้ชัด "ระบบรับคำขอแล้ว" ≠ "ประมวลผลเสร็จแล้ว"
+
+## โครงสร้างเอกสาร default
+
+```text
+# <ชื่อ Feature>
+## สรุปสั้น ๆ          (อ่านจบ 30–60 วินาที)
+## 1. ภาพรวม
+## 2. จุดประสงค์ทาง Business
+## 3. ผู้ที่เกี่ยวข้อง
+## 4. หน้าจอที่เกี่ยวข้อง        (skip ถ้าไม่มี UI)
+## 5. ขั้นตอนการทำงานของผู้ใช้
+## 6. Business Flow            (mermaid)
+## 7. กฎของระบบ                (ตาราง BR-xx)
+## 8. ภาพรวมระบบ               (architecture diagram)
+## 9. การทำงานเบื้องหลัง
+## 10. จังหวะส่งงานเข้า Queue
+## 11. Queue / Consumer Flow
+## 12. สถานะของงาน
+## 13. กรณีผิดปกติ              (ตาราง กรณี/ระบบทำอะไร/ผลกับผู้ใช้)
+## 14. ผลลัพธ์ที่ผู้ใช้ได้รับ
+## 15. Technical Reference     (ท้ายเอกสารเสมอ)
+```
+
+Skip หัวข้อที่ไม่เกี่ยวข้อง
+
+## โครงสร้างไฟล์
+
+```text
+docs/
+└── <feature-name>/
+    ├── README.md
+    ├── index.html          (ถ้าผู้ใช้เลือกทำ HTML template)
+    └── assets/
+        ├── ui/             (screenshot)
+        └── architecture/
+```
+
+---
+
+# UI Screenshot (full mode)
+
+บริบทการแคป:
+
+| Capability | วิธีการ |
+| --- | --- |
+| มี browser หรือ UI automation | เปิด app จริง navigate ไป feature แล้วแคปเอง |
+| ไม่มี browser/UI automation | ขอ screenshot จากผู้ใช้หรือข้ามส่วนแคป |
+| ไม่มีภาพจริงให้ตรวจสอบ | ระบุในเอกสารว่า capture ไม่ได้ ห้ามทำภาพปลอม |
+
+แคปเฉพาะจุดสำคัญ: entry page, main form, action button, confirm modal,
+processing state, result, error state — ไม่ต้องทุก click
+
+Safety: ห้ามแคปที่มี password, token, secret, production credential,
+ข้อมูลพนักงาน sensitive — ใช้ test/demo data
+
+ทุก screenshot ต้องมีคำอธิบายใต้ภาพ และบอกว่าผู้อ่านต้องสังเกตอะไร
+
+---
+
+# HTML Template Styles
+
+เมื่อผู้ใช้ต้องการ HTML ให้ถามหรือให้ผู้ใช้เลือกสไตล์ด้วยวิธี interaction
+มาตรฐานของ agent นั้น ๆ ถ้าผู้ใช้ระบุสไตล์มาแล้วให้ใช้ทันที:
+
+| Style | เหมาะกับ | ตัวอย่างอ้างอิง |
+| --- | --- | --- |
+| `swagger` | API reference, spec, migration plan, endpoint inventory | `references/template-swagger.md` |
+| `docusaurus` | Documentation site, เอกสาร feature ยาว, sidebar + content | `references/template-docusaurus.md` |
+| `dashboard` | Assessment, control center, metrics, blockers, roadmap | `references/template-dashboard.md` |
+| `slide` | Sprint review deck, นำเสนอ, scroll-snap slide + keyboard nav | `references/template-slide.md` + `assets/templates/slide-template.html` |
+
+เลือก template ตามวัตถุประสงค์การใช้งานจริง ไม่ใช่ความสวย
+อ่านไฟล์ reference ของสไตล์นั้นก่อนสร้างทุกครั้ง
+
+เมื่อเลือก `slide` ให้ใช้ `assets/templates/slide-template.html` เป็น visual shell
+สำหรับสี ฟอนต์ spacing, fixed chrome, navigation และ animation แล้วแทนที่เนื้อหา
+เฉพาะ feature ใหม่ ห้ามนำข้อความหรือข้อมูล Cognito demo จาก template ไปใช้โดยไม่มี
+evidence จาก source code
+
+## กฎการสร้าง HTML (Mandatory)
+
+1. **เนื้อหาต้องมาจาก Markdown ก่อน** — HTML เป็นอีก format ของเนื้อหาเดียวกัน
+   ไม่ใช่เนื้อหาใหม่ และ Markdown ต้องยังอยู่คู่กันเสมอ (repo ต้องแก้ไขต่อได้ง่าย)
+2. **CDN snapshot** — ไฟล์ HTML ที่ใช้ CDN (Tailwind, Mermaid, React, fonts)
+   ต้องระบุ CDN link แบบ pinned version ไม่ใช้ `@latest`
+   ถ้าต้องใช้แบบ offline ให้ snapshot ลง `assets/vendor/` ด้วย:
+   ```bash
+   ./scripts/vendor-cdn.sh <docs-feature-dir> \
+     https://cdn.jsdelivr.net/npm/mermaid@12.0.0/dist/mermaid.min.js ...
+   ```
+3. **Mermaid ใน HTML** — ต้อง include mermaid และเรียก
+   `mermaid.initialize({ startOnLoad: true })` แล้ววาง diagram เป็น
+   `<pre class="mermaid">...</pre>` — อย่าลืม dependency นี้ทุกครั้งที่มี diagram
+4. **Tailwind** — ถ้าใช้ Tailwind ให้ใช้ browser build ที่ pin version เช่น
+   `<script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4.3.3"></script>`
+   พร้อม importmap สำหรับ React ถ้าจำเป็น (ดูตัวอย่างใน template reference)
+5. **Fonts ไทย** — ใช้ Google Fonts ไทย (Bai Jamjuree, IBM Plex Sans Thai,
+   Noto Sans Thai, Chakra Petch) ตามสไตล์ของ template
+6. **ตรวจสอบก่อนส่ง** — `./scripts/check-html.sh <file.html>` เพื่อตรวจว่า
+   mermaid/tailwind ที่ HTML อ้างถึงถูก include ครบ
+
+---
+
+# Flow Diagram Assets — diagram-design
+
+**เน้นย้ำ: สำหรับพวกรูป flow / diagram สไตล์สวย ให้ใช้ไฟล์จาก
+<https://github.com/cathrynlavery/diagram-design> ซึ่ง skill นี้ vendor
+สำเร็จรูปไว้แล้วทั้งหมดที่ `assets/diagram-design/` (MIT license)**
+ทำงาน offline ได้ ไม่ต้อง clone ตอน runtime
+
+ไฟล์สำคัญใน `assets/diagram-design/`:
+
+- `assets/example-*.html` — diagram HTML สำเร็จรูป (architecture, flowchart,
+  data-flow, journey, kanban, timeline, bar, bump, waterfall ฯลฯ)
+  มีทั้งเวอร์ชันปกติ / `-dark` / `-full` — ลอกมาแก้ label เป็นภาษาไทยได้เลย
+- `references/type-*.md` — สเปกการ์ดแต่ละชนิด (flowchart, sequence, data-flow,
+  er, journey, timeline, dependency, layers ฯลฯ) อ่านก่อนเลือกชนิด
+- `references/style-guide.md` — กฎ style กลาง
+
+วิธีใช้:
+
+```bash
+./scripts/fetch-diagram-design.sh                  # แสดง path และตัวอย่างการใช้
+./scripts/fetch-diagram-design.sh --list           # ดูรายการไฟล์ทั้งหมด
+./scripts/fetch-diagram-design.sh --copy assets/example-architecture-full.html \
+  docs/<feature-name>/assets/architecture/         # ลอกพร้อม attribution header
+```
+
+กฎ:
+
+- คัดไฟล์ที่เหมาะกับเนื้อหา แปลงข้อความ label เป็นภาษาไทยตามกติกา Mermaid Language Rule
+- **Attribution บังคับ** — ไฟล์ที่ลอกไปวางใน docs ต้องมี comment หัวไฟล์
+  `<!-- Source: cathrynlavery/diagram-design (MIT) -->` (script `--copy` ใส่ให้อัตโนมัติ)
+- ถ้าไฟล์อ้าง CDN (fonts/mermaid/tailwind) ต้องเก็บ CDN link ไว้ให้ครบ
+  หรือ snapshot ตามกฎ CDN ด้านบน — **อย่าลบ dependency ที่จำเป็นต่อการ render**
+- ถ้าใช้ Mermaid ใน Markdown อยู่แล้ว ไฟล์จาก diagram-design ใช้เสริม
+  ใน HTML template ไม่ใช่แทนที่ Mermaid ใน Markdown
+- อัปเดตเวอร์ชัน: `./scripts/fetch-diagram-design.sh --update`
+  (จะ sync จาก upstream — จำเป็นต้อง update PIN ใน script และ ATTRIBUTION.md ตามที่มันแจ้ง)
+
+---
+
+# Scripts ประกอบ skill
+
+| Script | หน้าที่ |
+| --- | --- |
+| `scripts/new-doc.sh <feature-name>` | สร้างโครงสร้าง `docs/<feature>/` + README.md template |
+| `scripts/fetch-diagram-design.sh` | จัดการ vendored diagram-design (`--list`, `--copy`, `--update`) |
+| `scripts/vendor-cdn.sh <dir> <url>...` | snapshot CDN asset ลง `assets/vendor/` |
+| `scripts/check-html.sh <file>` | ตรวจว่า HTML include dependency ครบ (mermaid/tailwind) |
+
+รันได้จาก root ของ repo ที่กำลังทำ docs
+
+---
+
+# Final Quality Check
+
+ก่อนจบงาน MUST ตรวจ:
+
+1. เอกสารหลักเป็นภาษาไทย คน Business อ่านเข้าใจโดยไม่ต้องเปิด code
+2. มีสรุปสั้น ๆ อ่านจบก่อน meeting ได้
+3. ทุก diagram มีคำอธิบายภาษาไทย ใช้ภาษาไทยเป็นหลัก
+4. ไม่มีชื่อ class/method ปะปนใน business flow โดยไม่จำเป็น
+5. Queue: ระบุชัดงานเข้า Queue ตอนไหน, Consumer เริ่มทำงานตอนไหน, ทำอะไรต่อ
+6. Retry/DLQ ระบุเฉพาะที่มี evidence จริง
+7. Unknown behavior = TBD ไม่ใช่การเดา
+8. Technical Reference อยู่ท้ายเอกสาร
+9. (full) Screenshot ไม่มี secret, ทุกภาพมีคำอธิบาย
+10. (มี HTML) ผ่าน `check-html.sh`, CDN pinned, mermaid render ได้
+
+Priority:
+
+```text
+ความถูกต้องจาก Implementation
+  → Business อ่านเข้าใจง่าย
+  → Flow เห็นภาพชัด
+  → UI Evidence
+  → Architecture / Async Timing
+  → Technical Detail
+```
+
+> เอกสารนี้ไม่ได้มีไว้พิสูจน์ว่า architecture ซับซ้อนแค่ไหน
+> แต่มีไว้ให้คนที่ไม่ได้อ่าน code เข้าใจว่าระบบทำอะไร ใครทำอะไรต่อ
+> ข้อมูลวิ่งไปทางไหน และ Business ได้ผลลัพธ์อะไร
