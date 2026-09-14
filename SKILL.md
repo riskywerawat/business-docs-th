@@ -335,7 +335,8 @@ Safety: ห้ามแคปที่มี password, token, secret, production
 ```text
 จากภาพรวมระบบและส่วน "ใครทำอะไร" ต้องการเพิ่มภาพประกอบ AI จำนวน 1 ภาพ
 ใน HTML เพื่อช่วยเล่า ownership และ handoff ให้เห็นเร็วขึ้นไหม?
-1. ai-illustration — สร้างภาพเดียวสำหรับภาพรวมระบบ (เช่น example.png)
+1. ai-illustration — สร้างภาพเดียวสำหรับภาพรวมระบบ พร้อมข้อความสั้น ๆ บนภาพ
+   ตาม reference (เช่น example.png)
 2. none — ใช้ Mermaid, HTML/CSS และข้อความเท่านั้น
 ```
 
@@ -358,12 +359,27 @@ Safety: ห้ามแคปที่มี password, token, secret, production
   `docs/<feature-name>/assets/illustrations/example.png`
 - หากเห็นว่าจำเป็นต้องใช้ภาพมากกว่า 1 ภาพ ต้องหยุดและถามผู้ใช้ก่อนทุกครั้ง
   โดยระบุจำนวนและ scope ของภาพที่จะเพิ่ม ห้ามอนุมานว่าผู้ใช้อนุมัติแล้ว
+- ภาพที่ generate ต้องมี visible text บนภาพให้เห็นจริงเหมือน reference เช่น
+  title, label ของ actor/system และ callout หรือ legend สั้น ๆ ห้ามส่งภาพที่มีแต่
+  illustration แล้วไม่มีข้อความ
+- ให้ใช้ `example.png` เป็น composition reference สำหรับภาพ overview: infographic
+  แนวนอน 16:9 บนพื้นสว่าง, title ใหญ่ด้านบน, subtitle สรุป flow, กล่องขั้นตอนเรียง
+  ซ้ายไปขวาพร้อมเลขกำกับและลูกศร, icon ในแต่ละกล่อง, ข้อความผลลัพธ์ใต้กล่อง,
+  callout สรุปประเด็นสำคัญ และ legend สถานะผลลัพธ์ด้านล่าง
 - เมื่อเลือก `ai-illustration` ให้ใช้ image-generation capability ของ agent ถ้ามี
   ถ้าไม่มี ให้แจ้งข้อจำกัดและใช้ `none` หรือถามผู้ใช้ให้แนบภาพแทน
 - prompt ต้องอ้างอิงเฉพาะ actor, system, boundary, responsibility และ handoff
   ที่ยืนยันได้จาก source code; ห้ามเติม service, role, logo, vendor หรือ data flow ใหม่
-- ให้ AI สร้างภาพเชิง concept/editorial ที่ไม่มีข้อความสำคัญในภาพ แล้ว render
-  labels, legend และคำอธิบายด้วย HTML เพื่อให้แก้ไขและเข้าถึงได้
+- ก่อน generate ให้ระบุ `Required visible text` ใน prompt เป็นข้อความสั้น ๆ
+  ที่ต้องปรากฏบนภาพแบบตรงตามต้นฉบับ: 1 title, 1 subtitle, label/ข้อความผลลัพธ์
+  ของแต่ละขั้น, 1 callout และ legend สถานะตามที่ evidence รองรับ; ห้ามสร้างข้อความใหม่เอง
+- ถ้า flow มีหลายขั้น ให้แสดงเป็นกล่อง numbered flow เหมือน `example.png` และให้แต่ละ
+  กล่องมี owner/system label, icon ที่สื่อความหมาย และ outcome สั้น ๆ; ห้ามทำเป็น
+  ภาพ abstract ที่ไม่มีลำดับการทำงาน
+- labels/caption ฉบับเต็มยังต้องมีใน HTML เพื่อ accessibility แต่ห้ามใช้ HTML
+  เป็นตัวแทนจนทำให้ภาพที่ส่งออกไม่มีข้อความ
+- หลัง generate ต้องตรวจ pixel จริงว่าข้อความมีครบ อ่านได้ และสะกดถูกต้อง
+  ถ้าขาด/เพี้ยนให้ regenerate หรือทำ text overlay แล้วตรวจซ้ำ ห้ามส่งภาพเปล่า
 - output แนะนำที่ `docs/<feature-name>/assets/illustrations/example.png`
   และฝังใน HTML ด้วย alt text ที่อธิบายภาพตาม evidence
 - ใต้ภาพต้องติดป้าย `AI-GENERATED ILLUSTRATION · CONCEPTUAL` และระบุว่า
