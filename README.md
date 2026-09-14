@@ -12,19 +12,23 @@ business-docs-th/
 ├── agents/openai.yaml              # optional Codex UI metadata
 ├── ATTRIBUTION.md                  # license notes for vendored content
 ├── references/                     # HTML template style guides
+│   ├── ui-theme.md                 #   shared UI language (ยกเว้น slide)
+│   ├── ai-illustration.md          #   AI system overview image decision/rules
 │   ├── template-swagger.md         #   API reference / spec style
 │   ├── template-docusaurus.md      #   docs site style
 │   ├── template-dashboard.md       #   assessment / control center style
 │   └── template-slide.md           #   presentation / sprint deck style
-├── assets/templates/               # supplied reusable HTML shells
-│   └── slide-template.html         #   supplied slide template
+├── assets/templates/               # supplied reusable HTML templates/examples
+│   ├── slide-template.html         #   supplied slide template
+│   ├── business-docs-ui.css        #   shared UI theme (ยกเว้น slide)
+│   └── order-fulfillment-run-example.html # dummy simulation UI example
 ├── assets/diagram-design/          # vendored MIT copy of
 │   │                               # github.com/cathrynlavery/diagram-design
 │   ├── assets/example-*.html       #   ready-made diagram HTML
 │   ├── references/type-*.md        #   diagram type specs
 │   └── LICENSE.upstream            #   upstream MIT license text
 └── scripts/
-    ├── new-doc.sh                  # scaffold docs/<feature>/ structure
+    ├── new-doc.sh                  # scaffold docs/<feature>/ + shared UI theme
     ├── fetch-diagram-design.sh     # manage vendored copy (--list/--copy/--update)
     ├── vendor-cdn.sh               # snapshot CDN assets for offline HTML
     └── check-html.sh               # verify HTML includes mermaid/tailwind deps
@@ -34,8 +38,13 @@ business-docs-th/
 
 - **lite** — explore codebase + Markdown (Thai) + Mermaid flow diagrams,
   แล้วถามว่าต้องการ HTML template ไหม (swagger / docusaurus / dashboard / slide)
-- **full** — lite + วิเคราะห์หน้า UI frontend + UI screenshot
-  (capture เมื่อ agent มี browser/UI automation) + เลือกและสร้าง HTML template
+- **full** — lite + วิเคราะห์หน้า UI frontend + เลือก UI artifact
+  (เลือก simulation/snapshot/both/none ตามหลักฐานที่มี) + เลือกและสร้าง HTML template
+
+HTML references ทุกแบบยกเว้น slide ใช้ visual system เดียวกับ Order Fulfillment reference:
+IBM Plex Sans Thai/IBM Plex Mono, paper-and-ink palette, docs topbar/sidebar,
+cards, status pills และ dark simulator panel ดูรายละเอียดที่
+`references/ui-theme.md`
 
 ## Install
 
@@ -91,18 +100,26 @@ npx skills@latest add . --skill business-docs-th --agent codex --yes
 Skill แบบพื้นฐานใช้ `SKILL.md` เดียวร่วมกันได้ทั้งสาม agent ไม่ต้องทำไฟล์
 `CLAUDE.md` หรือ `copilot-instructions.md` ซ้ำ เว้นแต่ต้องการ behavior เฉพาะ product
 
+เมื่อพบ UI ให้ถามเลือก `simulation`, `snapshot`, `both` หรือ `none`
+หลังตรวจ implementation แล้ว ถ้าเป็นระบบหลังบ้านหรือไม่มี UI จริง ให้ถามเพิ่มว่า
+ต้องการ `simulation UI` เพื่ออธิบาย flow คล้าย Order Fulfillment Run หรือไม่
+
+เมื่อ HTML มีภาพรวมระบบหรือส่วน "ใครทำอะไร" ให้ถามเพิ่มว่าจะสร้าง
+`ai-illustration` หรือใช้ Mermaid/HTML/CSS อย่างเดียว ดูกติกาที่
+`references/ai-illustration.md`
+
 ## Scripts
 
 ```bash
-./scripts/new-doc.sh payroll-calculation          # scaffold docs/
+./scripts/new-doc.sh order-fulfillment            # scaffold docs/
 ./scripts/fetch-diagram-design.sh --list          # ดู diagram สำเร็จรูปทั้งหมด (vendored)
 ./scripts/fetch-diagram-design.sh --copy \
   assets/example-architecture-full.html \
-  docs/payroll-calculation/assets/architecture/   # ลอกพร้อม attribution header
+  docs/order-fulfillment/assets/architecture/     # ลอกพร้อม attribution header
 ./scripts/fetch-diagram-design.sh --update        # sync จาก upstream (network)
-./scripts/vendor-cdn.sh docs/payroll-calculation \
+./scripts/vendor-cdn.sh docs/order-fulfillment \
   https://cdn.jsdelivr.net/npm/mermaid@12.0.0/dist/mermaid.min.js
-./scripts/check-html.sh docs/payroll-calculation/index.html
+./scripts/check-html.sh docs/order-fulfillment/index.html
 ```
 
 กฎหลัก: Evidence before assumption — ห้ามเดา behavior, ห้ามวาด flow ที่ไม่มี

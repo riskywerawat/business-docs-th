@@ -3,7 +3,7 @@ name: business-docs-th
 description: >
   สร้างเอกสาร Business ภาษาไทยจาก source code จริง สองระดับ:
   lite = explore + Markdown + Mermaid flow diagram (+ ถามเรื่อง HTML template),
-  full = explore + วิเคราะห์ UI frontend + แคปหน้าจอ + เลือก template HTML/Slide.
+  full = explore + วิเคราะห์ UI frontend + เลือก simulation/snapshot + template HTML/Slide.
   ใช้สำหรับ feature documentation, business flow, system architecture,
   async/queue flow, integration, handover, และ meeting materials.
 ---
@@ -50,24 +50,31 @@ tool ให้ถามเป็นข้อความธรรมดาแท
    - `docusaurus` — docs site style
    - `dashboard` — assessment / control center style
    - `slide` — interactive sprint deck / นำเสนอ
+   ก่อนสร้าง HTML ให้ตรวจ `ภาพรวมระบบ / ใครทำอะไร` และถาม AI illustration
+   ตามหัวข้อ `AI System Overview Illustration Decision`
    ถ้าไม่เอา → จบงานที่ Markdown
 
-## full — Explore + วิเคราะห์ + UI Screenshot + Template
+## full — Explore + วิเคราะห์ + UI Artifact + Template
 
 1. Explore codebase ทั้งหมดเหมือน lite (Step 0–7)
 2. วิเคราะห์ว่า feature เกี่ยวข้องกับหน้า UI frontend หรือไม่
    (ค้นหา page / route / component / menu ที่เกี่ยวข้อง)
-3. ถ้ามี UI → ถามผู้ใช้เรื่องการแคปหน้าจอ:
-   - ถ้ามี browser หรือ UI automation capability → เปิด app จริง navigate ไป feature
-     แล้วแคปเอง
-   - ถ้าไม่มี capability ดังกล่าว → ขอผู้ใช้แนบ screenshot เองหรือข้ามส่วนแคป
+3. เลือก UI artifact ตามหัวข้อ `UI Artifact Decision`:
+   - ถ้าพบ UI จริง → ถามว่าจะทำ `simulation`, `snapshot`, `both` หรือ `none`
+   - ถ้าเป็นระบบหลังบ้านหรือไม่มี UI จริง → ถามว่าจะทำ `simulation UI`
+     เพื่ออธิบาย flow หรือ `none`
+   - ถ้าเลือก `snapshot` และมี browser/UI automation → เปิด app จริงแล้วแคป
+   - ถ้าเลือก `snapshot` แต่ไม่มี capability → ขอผู้ใช้แนบภาพจริงเองหรือข้าม
    - ห้ามสร้าง screenshot ปลอม ห้ามเดา UI ถ้าแคปไม่ได้ให้ระบุว่า
-     "TBD / ไม่สามารถ capture UI จริงได้จาก environment นี้"
+     `TBD / ไม่สามารถ capture UI จริงได้จาก environment นี้`
 4. ถามผู้ใช้เรื่อง template HTML (เหมือน lite ข้อ 3) — ให้เลือกสไตล์ก่อนสร้างเสมอ
-5. สร้าง Markdown (มี screenshot ฝังถ้ามี) + HTML template ตามสไตล์ที่เลือก
+5. ตรวจ `ภาพรวมระบบ / ใครทำอะไร` และถาม AI illustration ตามหัวข้อ
+   `AI System Overview Illustration Decision`
+6. สร้าง Markdown + artifact ที่เลือก + HTML template และ AI illustration
+   ตามที่ผู้ใช้เลือก
 
 ผู้ใช้ระบุ level ในคำสั่งแล้ว → ข้ามการถาม level แต่ยังต้องถาม template style
-และเรื่อง screenshot ตามขั้นตอนเมื่อข้อมูลนั้นยังไม่มี
+และ UI artifact ตามขั้นตอนเมื่อข้อมูลนั้นยังไม่มี
 
 ---
 
@@ -158,7 +165,7 @@ Producer → Queue/Topic → Consumer → Handler → DB / External Service
 ## ภาษา
 
 - เอกสารหลักเป็นภาษาไทย อ่านเข้าใจง่าย ใช้ใน meeting ได้ทันที
-- Technical terms ทั่วไปใช้ English ได้ (API, Queue, Consumer, Scheduler, Pay Group)
+- Technical terms ทั่วไปใช้ English ได้ (API, Queue, Consumer, Scheduler, Order Batch)
 - คำที่คน Business อาจไม่เข้าใจ อธิบายง่าย ๆ ตอนกล่าวถึงครั้งแรก เช่น
   "Queue คือพื้นที่พักงานที่รอให้ระบบเบื้องหลังนำไปประมวลผลต่อ"
 
@@ -217,13 +224,28 @@ docs/
     ├── README.md
     ├── index.html          (ถ้าผู้ใช้เลือกทำ HTML template)
     └── assets/
+        ├── business-docs-ui.css (HTML reference ทุกแบบยกเว้น slide)
         ├── ui/             (screenshot)
+        ├── illustrations/  (AI conceptual illustrations)
         └── architecture/
 ```
 
+ถ้าเลือก simulation UI ให้เพิ่มไฟล์แยกจากเอกสารหลัก:
+
+```text
+docs/<feature-name>/
+└── simulation/
+    └── index.html
+```
+
+ให้ copy `assets/templates/business-docs-ui.css` ไปที่
+`docs/<feature-name>/assets/business-docs-ui.css` ก่อนสร้าง HTML ที่ไม่ใช่ slide
+และ link ด้วย `./assets/business-docs-ui.css`; ถ้าเป็น simulation ให้ใช้
+`../assets/business-docs-ui.css`
+
 ---
 
-# UI Screenshot (full mode)
+# UI Screenshot / Snapshot (full mode)
 
 บริบทการแคป:
 
@@ -243,6 +265,103 @@ Safety: ห้ามแคปที่มี password, token, secret, production
 
 ---
 
+# UI Artifact Decision
+
+ตัดสินใจหลังตรวจ implementation และ UI แล้วเท่านั้น ห้ามสร้าง mock เพื่อเติม
+สิ่งที่ source code ยังยืนยันไม่ได้
+
+## ถ้าพบ UI จริง
+
+ถามผู้ใช้ด้วย interaction มาตรฐานของ agent:
+
+```text
+พบหน้า UI ที่เกี่ยวข้องแล้ว ต้องการหลักฐานหรือสื่อประกอบแบบใด?
+1. simulation — HTML จำลองหน้าจอและ interaction ให้ใกล้เคียงของจริง
+2. snapshot — ภาพหน้าจอจริงจาก application
+3. both — ทำทั้ง simulation และ snapshot
+4. none — ไม่ต้องทำภาพหรือ mock เพิ่ม
+```
+
+## ถ้าเป็นระบบหลังบ้านหรือไม่มี UI จริง
+
+ถามแยกต่างหาก:
+
+```text
+ไม่พบหน้า UI สำหรับผู้ใช้ ต้องการทำ simulation UI ใน HTML
+เพื่ออธิบาย business flow คล้ายตัวอย่าง Order Fulfillment Run หรือไม่?
+1. simulation — ทำ mock UI ที่ระบุว่าไม่เชื่อมต่อระบบจริง
+2. none — ใช้ Markdown, Mermaid และ technical evidence เท่านั้น
+```
+
+## Simulation rules
+
+- ใช้ `assets/templates/order-fulfillment-run-example.html` เป็น reference เมื่อเหมาะสม
+  โดยคง layout ที่ช่วยเล่า flow แต่เปลี่ยน copy, fields, states และ metrics
+  ให้มาจาก implementation จริง และเปลี่ยน relative links ให้ชี้ไปยัง feature ปัจจุบัน
+- simulation ต้องติดป้าย `SIMULATION` หรือ `MOCK · ไม่เชื่อมต่อระบบจริง` ให้เห็นชัด
+- ทำ interaction ได้เฉพาะเพื่อสาธิต flow เช่น เปลี่ยน state, เปิดรายละเอียด,
+  จำลองผลลัพธ์ด้วย demo data ไม่เรียก API จริงและไม่เขียนข้อมูลจริง
+- ห้ามใส่ field, action, status, ตัวเลข หรือผลลัพธ์ที่ source code ยืนยันไม่ได้
+- ถ้าเป็นระบบหลังบ้าน ให้จำลองเฉพาะมุมมองที่ช่วยให้ Business เข้าใจงานเบื้องหลัง
+  ไม่สร้างหน้าจอผู้ใช้ปลอมแล้วอ้างว่าเป็นหน้าจอจริง
+- ใส่คำอธิบายใต้หรือข้าง mock ว่าส่วนใดอิงจาก code และส่วนใดเป็น illustration
+- ก่อน reuse example ให้ลบหรือเปลี่ยน local/source links, ตรวจข้อมูลที่ฝังใน HTML
+  และ pin dependency CDN; ห้ามเผย path เฉพาะเครื่องหรือข้อมูลลับ
+
+## Snapshot rules
+
+- snapshot ต้องเป็นภาพจริงจาก application หรือภาพที่ผู้ใช้แนบมาเท่านั้น
+- ถ้า agent ไม่มี browser/UI automation ให้ขอผู้ใช้แนบภาพจริง หรือระบุ `TBD`
+- ห้ามใช้ image generation, drawing หรือ mock screenshot แทน snapshot
+- ห้ามเปิดเผย password, token, production credential หรือข้อมูลส่วนบุคคลอ่อนไหว
+
+รายละเอียดการเลือก artifact อยู่ที่ `references/ui-artifacts.md`
+
+---
+
+# AI System Overview Illustration Decision
+
+ใช้ decision นี้ทุกครั้งที่ผู้ใช้เลือกสร้าง HTML และเอกสารมี section
+`ภาพรวมระบบ`, `System Overview`, actor/role หรือคำอธิบายว่าใครทำอะไร
+
+## เมื่อควรถาม
+
+- มี actor, team, service หรือ system boundary ตั้งแต่ 2 รายการขึ้นไป
+- ภาพประกอบจะช่วยให้ Business เห็น ownership หรือ handoff ได้เร็วกว่า text อย่างเดียว
+- ไม่ใช้ภาพ AI เพื่อแทน screenshot, Mermaid, sequence diagram หรือหลักฐานจาก code
+
+ถามผู้ใช้ด้วย interaction มาตรฐานของ agent:
+
+```text
+จากภาพรวมระบบและส่วน "ใครทำอะไร" ต้องการเพิ่มภาพประกอบที่ generate
+จาก AI ใน HTML เพื่อช่วยเล่า ownership และ handoff ให้เห็นเร็วขึ้นไหม?
+1. ai-illustration — เพิ่มภาพประกอบเชิงแนวคิดจาก evidence ใน source code
+2. none — ใช้ Mermaid, HTML/CSS และข้อความเท่านั้น
+```
+
+ถ้าไม่มี actor/role ที่ชัด หรือภาพไม่ได้ช่วยเพิ่มความเข้าใจ ให้ข้ามคำถามและไม่สร้างภาพ
+
+## AI illustration rules
+
+- เมื่อเลือก `ai-illustration` ให้ใช้ image-generation capability ของ agent ถ้ามี
+  ถ้าไม่มี ให้แจ้งข้อจำกัดและใช้ `none` หรือถามผู้ใช้ให้แนบภาพแทน
+- prompt ต้องอ้างอิงเฉพาะ actor, system, boundary, responsibility และ handoff
+  ที่ยืนยันได้จาก source code; ห้ามเติม service, role, logo, vendor หรือ data flow ใหม่
+- ให้ AI สร้างภาพเชิง concept/editorial ที่ไม่มีข้อความสำคัญในภาพ แล้ว render
+  labels, legend และคำอธิบายด้วย HTML เพื่อให้แก้ไขและเข้าถึงได้
+- output แนะนำที่ `docs/<feature-name>/assets/illustrations/system-overview.png`
+  และฝังใน HTML ด้วย alt text ที่อธิบายภาพตาม evidence
+- ใต้ภาพต้องติดป้าย `AI-GENERATED ILLUSTRATION · CONCEPTUAL` และระบุว่า
+  Mermaid/text/evidence เป็นแหล่งอ้างอิงจริง ภาพนี้เป็นสื่อช่วยอธิบายเท่านั้น
+- ห้ามใช้ภาพ AI เป็น snapshot, ภาพหน้าจอจริง, architecture evidence หรือผลยืนยัน
+  ว่า application มีหน้าตา/การทำงานแบบนั้น
+- ห้ามใส่ secret, token, PII, production data หรือข้อความที่ผู้ใช้ไม่ได้อนุมัติลงใน prompt
+- ถ้าผู้ใช้เลือก `none` ให้คง system overview ด้วย Mermaid/HTML/CSS ตาม evidence
+
+รายละเอียด visual component และ caption อยู่ที่ `references/ai-illustration.md`
+
+---
+
 # HTML Template Styles
 
 เมื่อผู้ใช้ต้องการ HTML ให้ถามหรือให้ผู้ใช้เลือกสไตล์ด้วยวิธี interaction
@@ -257,6 +376,11 @@ Safety: ห้ามแคปที่มี password, token, secret, production
 
 เลือก template ตามวัตถุประสงค์การใช้งานจริง ไม่ใช่ความสวย
 อ่านไฟล์ reference ของสไตล์นั้นก่อนสร้างทุกครั้ง
+
+สำหรับ `swagger`, `docusaurus`, `dashboard` และ simulation ให้ใช้
+`references/ui-theme.md` กับ `assets/templates/business-docs-ui.css` เป็น shared
+visual foundation เดียวกันเสมอ: IBM Plex Sans Thai สำหรับ display/body และ
+IBM Plex Mono สำหรับ technical text ส่วน `slide` ใช้ template ของ slide เอง
 
 เมื่อเลือก `slide` ให้ใช้ `assets/templates/slide-template.html` เป็น visual shell
 สำหรับสี ฟอนต์ spacing, fixed chrome, navigation และ animation แล้วแทนที่เนื้อหา
@@ -280,10 +404,13 @@ evidence จาก source code
 4. **Tailwind** — ถ้าใช้ Tailwind ให้ใช้ browser build ที่ pin version เช่น
    `<script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4.3.3"></script>`
    พร้อม importmap สำหรับ React ถ้าจำเป็น (ดูตัวอย่างใน template reference)
-5. **Fonts ไทย** — ใช้ Google Fonts ไทย (Bai Jamjuree, IBM Plex Sans Thai,
-   Noto Sans Thai, Chakra Petch) ตามสไตล์ของ template
+5. **Fonts ไทย** — reference ที่ไม่ใช่ `slide` ต้องใช้ IBM Plex Sans Thai และ
+   IBM Plex Mono ตาม `references/ui-theme.md` แบบเดียวกับ Order Fulfillment reference
 6. **ตรวจสอบก่อนส่ง** — `./scripts/check-html.sh <file.html>` เพื่อตรวจว่า
    mermaid/tailwind ที่ HTML อ้างถึงถูก include ครบ
+7. **AI system overview** — ถ้าเอกสารมี actor/role และผู้ใช้เลือก
+   `ai-illustration` ต้องมีภาพ, alt text, caption และป้าย
+   `AI-GENERATED ILLUSTRATION · CONCEPTUAL` ครบ; ถ้าเลือก `none` ห้ามสร้างภาพ
 
 ---
 
@@ -351,8 +478,9 @@ evidence จาก source code
 6. Retry/DLQ ระบุเฉพาะที่มี evidence จริง
 7. Unknown behavior = TBD ไม่ใช่การเดา
 8. Technical Reference อยู่ท้ายเอกสาร
-9. (full) Screenshot ไม่มี secret, ทุกภาพมีคำอธิบาย
-10. (มี HTML) ผ่าน `check-html.sh`, CDN pinned, mermaid render ได้
+9. (full) UI artifact ระบุชัดว่าเป็น snapshot จริงหรือ simulation/mock
+10. (full) Screenshot ไม่มี secret, ทุกภาพมีคำอธิบาย
+11. (มี HTML) ผ่าน `check-html.sh`, CDN pinned, mermaid render ได้
 
 Priority:
 

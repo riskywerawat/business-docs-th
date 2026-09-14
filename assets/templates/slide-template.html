@@ -1056,13 +1056,14 @@
                 <span>PostgreSQL · system_config_query.sql</span>
                 <button class="button-copy" onclick="copySnippet('sql-step1')">Copy</button>
               </div>
-              <pre id="sql-step1">SELECT
-	system_config.* 
+              <pre id="sql-step1">-- DUMMY SQL: presentation only
+SELECT
+    config.*
 FROM
-	system_config 
+    "dummy"."system_config" AS config
 WHERE
-	system_config.config_name = 'cognitoUsernamePrefix' 
-	AND tenant_uuid = '0bbf080f-9cec-410f-acf0-2b755484c516'</pre>
+    config.config_name = 'cognitoUsernamePrefix'
+    AND config.tenant_uuid = 'dummy-tenant-uuid';</pre>
             </div>
 
             <div class="code-terminal" style="background: #0f172a; border-color: rgba(255, 255, 255, .15);">
@@ -1083,7 +1084,7 @@ WHERE
                   </thead>
                   <tbody>
                     <tr style="color: #e2e8f0; background: rgba(255, 255, 255, .03);">
-                      <td style="padding: 8px 10px; white-space: nowrap;">0bbf080f-9cec-410f-acf0-2b755484c516</td>
+                      <td style="padding: 8px 10px; white-space: nowrap;">dummy-tenant-uuid</td>
                       <td style="padding: 8px 10px; white-space: nowrap;">cognitoUsernamePrefix</td>
                       <td style="padding: 8px 10px; white-space: nowrap; color: var(--acid); font-weight: bold; background: rgba(217, 255, 67, .12); border-radius: 4px;">"demo"</td>
                       <td style="padding: 8px 10px; white-space: nowrap; color: #64748b;">Prefix identifier for Cognito</td>
@@ -1179,7 +1180,8 @@ WHERE
               <span>Insert In-App Message (Pending)</span>
               <button class="button-copy" onclick="copySnippet('sql-step3')">Copy</button>
             </div>
-            <pre id="sql-step3">INSERT INTO "core_t2"."in_app_message" (
+            <pre id="sql-step3">-- DUMMY SQL: presentation only
+INSERT INTO "dummy"."in_app_message" (
     "uuid",
     "entity_type",
     "entity_id",
@@ -1192,15 +1194,15 @@ WHERE
     "last_processed_at",
     "attempt"
 ) VALUES (
-    gen_random_uuid(),
+    'dummy-message-uuid',
     'employee_profile',
-    '84945310-e073-5f1f-842e-2600643d3b7d',
+    'dummy-employment-uuid',
     'employee_profile.data_change_cognito',
     NULL,
-    '{"after": {"isActive": true, "lastName": "LN10363409", "firstName": "LN10363409", "seniorityDate": "2026-06-08", "timeProfileUuid": "878e842a-4cbd-571e-a00c-37beae52ae76", "currentStartDate": "2026-06-08", "workScheduleUuid": "2c8d9dd8-a879-5f16-8cad-767789dd0fb1", "employeeClassUuid": "e8623af7-1698-565e-a799-1119b07bc740", "corporateLevelUuid": "f88acfbb-ad35-56b2-9f43-1b5e23fa35f8", "holidayCalendarUuid": "6aa3e9cb-46c3-5457-96ad-e1d1c8cf2654", "dateOfBirthEncrypted": "kpH2gyHglR5F5q97LKeiz85h+AvHb0AEHdI=:OFHxubewr+Ne74ni9L0yJg==:4FMB6TTplAFHNIC/QC/5xA==:0"}, "before": null, "updatedAt": "2026-06-25T08:16:18.067Z", "updatedBy": "system", "employeeId": "10363409", "personUuid": "84945310-e073-5f1f-842e-2600643d3b7d", "changeEvent": "hire", "employmentUuid": "84945310-e073-5f1f-842e-2600643d3b7d", "jobEffectiveStart": "2026-06-08T00:00:00.000Z"}',
+    '{"after": {"isActive": true, "employeeId": "dummy-employee-id", "dateOfBirthEncrypted": "dummy-encrypted-value"}, "before": null, "updatedAt": "2026-01-01T00:00:00.000Z", "updatedBy": "dummy-user", "changeEvent": "hire", "employmentUuid": "dummy-employment-uuid"}',
     'pending',
-    NOW(),
-    NOW(),
+    CURRENT_TIMESTAMP,
+    CURRENT_TIMESTAMP,
     NULL,
     0
 );</pre>
@@ -1319,26 +1321,26 @@ WHERE
             <div class="form-group">
               <label>เลือก Master Location ใหม่ (After - 20 Items)</label>
               <select class="form-control" id="location-selector" onchange="renderLocationScripts()">
-                <option value="42ba3fca-ed5b-56ba-8f24-6e87af8783bb" selected>Head Office</option>
-                <option value="e336ee7f-d6c2-57ff-bb45-d397b650076b">Kluang Broiler Hatchery</option>
-                <option value="bc7dfbfc-7436-51a5-9dff-efe46b056977">Sg. Sayong Breeder Hatchery</option>
-                <option value="7a929128-f3ed-53ed-96d9-4869ac59b8de">Ulu Tiram Integration Office</option>
-                <option value="25155962-9d55-5ec3-b912-31ffeab79ee7">Pontian Slaughterhouse Outsource</option>
-                <option value="2c4e6b89-d2c8-5942-86ca-be7a9b7e6eff">An Xin Taman Aman</option>
-                <option value="1f39abe3-9f5e-5446-8666-c1b8675f0a96">An Xin Taman Intan</option>
-                <option value="fee8f42f-a71e-567f-9482-0f6c9d3969ad">Lotus's Desa Tebrau</option>
-                <option value="aa2e07e4-f8cf-5923-bc77-b53c861f1720">Lotus's Bukit Indah</option>
-                <option value="1f797f38-2eec-5ad1-92f1-f7ec2eb24701">Lotus's Kluang</option>
-                <option value="11f72f7b-9061-53d0-955e-ad5336c26a2c">Lotus's Muar</option>
-                <option value="0c030c64-0577-53ab-925a-a00dced33244">Lotus's Mutiara Rini</option>
-                <option value="b4102ef2-c165-5e31-b388-0c6744144ff5">Lotus's Seri Alam</option>
-                <option value="2c278f6f-6664-5338-8b64-cd008014e6d5">Lotus's Setia Tropika</option>
-                <option value="406873bd-59da-508e-8cc2-b002e41fd705">Kulim Slaughterhouse Outsource</option>
-                <option value="d9d8f78b-8cf6-5904-894a-3120de522287">Lotus's Cheras</option>
-                <option value="e3d21574-ba6e-55b6-9414-3d5c5f36f6a4">Lotus's IOI City Mall</option>
-                <option value="a458323d-4c70-530b-b136-f8b7872c4cd8">An Xin Alam Damai</option>
-                <option value="54aaf047-9f46-543f-8756-5dfb12b6d50e">Trat Promotion Project</option>
-                <option value="87e94525-93ff-565c-bf61-785bbf243a0f">C.P. Viet Nam - Trai Long Tan</option>
+                <option value="dummy-location-01" selected>Head Office</option>
+                <option value="dummy-location-02">Kluang Broiler Hatchery</option>
+                <option value="dummy-location-03">Sg. Sayong Breeder Hatchery</option>
+                <option value="dummy-location-04">Ulu Tiram Integration Office</option>
+                <option value="dummy-location-05">Pontian Slaughterhouse Outsource</option>
+                <option value="dummy-location-06">An Xin Taman Aman</option>
+                <option value="dummy-location-07">An Xin Taman Intan</option>
+                <option value="dummy-location-08">Lotus's Desa Tebrau</option>
+                <option value="dummy-location-09">Lotus's Bukit Indah</option>
+                <option value="dummy-location-10">Lotus's Kluang</option>
+                <option value="dummy-location-11">Lotus's Muar</option>
+                <option value="dummy-location-12">Lotus's Mutiara Rini</option>
+                <option value="dummy-location-13">Lotus's Seri Alam</option>
+                <option value="dummy-location-14">Lotus's Setia Tropika</option>
+                <option value="dummy-location-15">Kulim Slaughterhouse Outsource</option>
+                <option value="dummy-location-16">Lotus's Cheras</option>
+                <option value="dummy-location-17">Lotus's IOI City Mall</option>
+                <option value="dummy-location-18">An Xin Alam Damai</option>
+                <option value="dummy-location-19">Trat Promotion Project</option>
+                <option value="dummy-location-20">C.P. Viet Nam - Trai Long Tan</option>
               </select>
             </div>
 
@@ -1357,17 +1359,18 @@ WHERE
                 <span>1. Verify Current Profile with Location Name</span>
                 <button class="button-copy" onclick="copySnippet('sql-emp-select')">Copy</button>
               </div>
-              <pre id="sql-emp-select">SELECT
+              <pre id="sql-emp-select">-- DUMMY SQL: presentation only
+SELECT
     ep.employment_uuid,
     ep.location_uuid,
     loc.name AS location_name,
     loc.*
 FROM
-    "employee_profile" ep
-LEFT JOIN "location" loc 
+    "dummy"."employee_profile" ep
+LEFT JOIN "dummy"."location" loc
     ON ep.location_uuid = loc.uuid
 WHERE
-    ep.employment_uuid = '84945310-e073-5f1f-842e-2600643d3b7d';</pre>
+    ep.employment_uuid = 'dummy-employment-uuid';</pre>
             </div>
 
             <!-- 5.2: Dynamic UPDATE Profile -->
@@ -1541,13 +1544,14 @@ WHERE
     function renderLocationScripts() {
       const select = document.getElementById("location-selector");
       const selectedUuid = select.value;
-      const oldUuid = "0dc01899-ec0d-590b-9e15-91d6d8230793";
-      const targetEmploymentUuid = "84945310-e073-5f1f-842e-2600643d3b7d";
+      const oldUuid = "dummy-location-before";
+      const targetEmploymentUuid = "dummy-employment-uuid";
 
-      const empUpdateSql = `UPDATE "core_t2"."employee_profile"
+      const empUpdateSql = `-- DUMMY SQL: presentation only
+UPDATE "dummy"."employee_profile"
 SET 
     "location_uuid" = '${selectedUuid}',
-    "updated_at" = NOW()
+    "updated_at" = CURRENT_TIMESTAMP
 WHERE 
     "employment_uuid" = '${targetEmploymentUuid}';`;
 
@@ -1558,19 +1562,20 @@ WHERE
         "before": {
           "locationUuid": oldUuid
         },
-        "updatedAt": "2026-09-07T07:34:57.238Z",
-        "updatedBy": "system",
-        "employeeId": "10363409",
+        "updatedAt": "2026-01-01T00:00:00.000Z",
+        "updatedBy": "dummy-user",
+        "employeeId": "dummy-employee-id",
         "personUuid": targetEmploymentUuid,
         "changeEvent": "update",
         "employmentUuid": targetEmploymentUuid,
-        "jobEffectiveStart": "2025-06-01T00:00:00.000Z"
+        "jobEffectiveStart": "2026-01-01T00:00:00.000Z"
       };
 
       const jsonString = JSON.stringify(payloadObj, null, 2);
       const singleLineJson = JSON.stringify(payloadObj);
 
-      const inAppSql = `INSERT INTO "core_t2"."in_app_message" (
+      const inAppSql = `-- DUMMY SQL: presentation only
+INSERT INTO "dummy"."in_app_message" (
     "uuid",
     "entity_type",
     "entity_id",
@@ -1583,15 +1588,15 @@ WHERE
     "last_processed_at",
     "attempt"
 ) VALUES (
-    gen_random_uuid(),
+    'dummy-message-uuid',
     'employee_profile',
     '${targetEmploymentUuid}',
     'employee_profile.data_change_cognito',
     NULL,
     '${singleLineJson}',
     'pending',
-    NOW(),
-    NOW(),
+    CURRENT_TIMESTAMP,
+    CURRENT_TIMESTAMP,
     NULL,
     0
 );`;

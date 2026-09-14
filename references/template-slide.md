@@ -9,6 +9,10 @@
 ไว้ แล้วแทนที่ title, copy, labels, metrics และ demo-specific content ให้มาจาก
 feature ที่กำลังทำเท่านั้น
 
+ถ้า slide ต้องลิงก์ไปยัง interactive mock ให้ใช้
+`assets/templates/order-fulfillment-run-example.html` เป็น reference ของ simulation
+แล้วแยก mock ไปไว้ที่ `docs/<feature-name>/simulation/index.html`
+
 ## โครงหน้า
 
 - Fixed chrome: progress bar บน, brand + slide counter บนซ้าย/ขวา,

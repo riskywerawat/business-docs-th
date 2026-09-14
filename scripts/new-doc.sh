@@ -12,7 +12,13 @@ DIR="$FEATURE"
 if [[ "$FEATURE" != /* ]]; then
   DIR="docs/$FEATURE"
 fi
-mkdir -p "$DIR/assets/ui" "$DIR/assets/architecture" "$DIR/assets/vendor"
+REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+mkdir -p "$DIR/assets/ui" "$DIR/assets/illustrations" "$DIR/assets/architecture" "$DIR/assets/vendor"
+
+# Shared non-slide HTML references use this theme. Slide output may ignore it.
+if [[ ! -f "$DIR/assets/business-docs-ui.css" ]]; then
+  cp "$REPO_ROOT/assets/templates/business-docs-ui.css" "$DIR/assets/business-docs-ui.css"
+fi
 
 if [[ ! -f "$DIR/README.md" ]]; then
   cat > "$DIR/README.md" <<EOF
@@ -70,4 +76,5 @@ EOF
 fi
 
 echo "created: $DIR"
+echo "theme: $DIR/assets/business-docs-ui.css"
 find "$DIR" -type d
