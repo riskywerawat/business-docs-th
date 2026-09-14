@@ -442,9 +442,17 @@ evidence จาก source code
 หลังสร้าง HTML ต้องทำ visual QA ก่อนส่ง:
 
 - รัน `./scripts/check-html.sh <file.html>` และตรวจ JavaScript syntax
-- ถ้ามี browser/UI automation ให้เปิดดูจริงและตรวจอย่างน้อย desktop กับความกว้าง
-  320, 375, 414 และ 768 px; แก้ overflow, hierarchy, spacing, contrast,
-  focus state และ reduced-motion ให้เรียบร้อย
+- ต้องเปิดไฟล์ HTML ที่ generate แล้วตรวจจาก rendered output จริงด้วย browser/UI
+  automation เมื่อ capability พร้อม ห้ามสรุปว่า layout ผ่านจากการอ่าน source อย่างเดียว
+- ตรวจให้ layout ไม่ผิดเพี้ยนตามกติกา `anthropic-frontend-design` และ `hallmark`:
+  ไม่มี element ซ้อน/ล้น, text overlap หรือถูกตัด, spacing และ visual hierarchy
+  ไม่พัง, ภาพไม่ยืดผิดสัดส่วน, ลูกศร/เส้น/กล่องยัง align กัน, สีและ contrast อ่านได้,
+  interactive states ใช้งานได้ และไม่มี horizontal scroll
+- ตรวจอย่างน้อย desktop และความกว้าง 320, 375, 414 และ 768 px; สำหรับ `slide`
+  ให้ตรวจทุก slide/section รวมถึง fixed chrome, scroll-snap, navigation, animation
+  และข้อความใน `example.png`/ภาพประกอบไม่ถูก crop หรือบีบจนเสียสัดส่วน
+- ถ้าพบ layout เพี้ยน ให้แก้ HTML/CSS แล้ว render ตรวจซ้ำจนผ่าน ห้ามส่งไฟล์ที่ยังมี
+  known visual defect
 - ถ้าไม่มีความสามารถ render ให้ระบุ `TBD / ไม่สามารถทำ visual QA จาก environment นี้ได้`
   ห้ามอ้างว่าหน้าผ่าน visual QA
 
