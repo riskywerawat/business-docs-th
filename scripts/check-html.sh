@@ -26,9 +26,14 @@ check 'class="mermaid"' \
       'mermaid\.initialize' \
       'ต้องเรียก mermaid.initialize({ startOnLoad: true }) เมื่อมี mermaid block'
 
-check 'tailwindcss|@apply|class="[^"]*\b(flex|grid|px-|py-|text-(xs|sm|lg|xl))' \
-      'tailwindcss/browser|assets/vendor/@tailwindcss' \
-      'ใช้ Tailwind class แต่ไม่ได้ include @tailwindcss/browser'
+if grep -qE 'tailwindcss|@apply' "$FILE" || \
+   grep -oE 'class="[^"]+"' "$FILE" | \
+   grep -qE '(^|[[:space:]])(flex|grid|grid-cols-[0-9]+|px-[0-9]+|py-[0-9]+|text-(xs|sm|lg|xl))([[:space:]]|")'; then
+  if ! grep -qE 'tailwindcss/browser|assets/vendor/@tailwindcss' "$FILE"; then
+    echo 'MISSING: ใช้ Tailwind class แต่ไม่ได้ include @tailwindcss/browser'
+    fail=1
+  fi
+fi
 
 check 'esm\.sh/react|import React' \
       'importmap|esm\.sh/react@' \
