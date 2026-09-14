@@ -333,23 +333,38 @@ Safety: ห้ามแคปที่มี password, token, secret, production
 ถามผู้ใช้ด้วย interaction มาตรฐานของ agent:
 
 ```text
-จากภาพรวมระบบและส่วน "ใครทำอะไร" ต้องการเพิ่มภาพประกอบที่ generate
-จาก AI ใน HTML เพื่อช่วยเล่า ownership และ handoff ให้เห็นเร็วขึ้นไหม?
-1. ai-illustration — เพิ่มภาพประกอบเชิงแนวคิดจาก evidence ใน source code
+จากภาพรวมระบบและส่วน "ใครทำอะไร" ต้องการเพิ่มภาพประกอบ AI จำนวน 1 ภาพ
+ใน HTML เพื่อช่วยเล่า ownership และ handoff ให้เห็นเร็วขึ้นไหม?
+1. ai-illustration — สร้างภาพเดียวสำหรับภาพรวมระบบ (เช่น example.png)
 2. none — ใช้ Mermaid, HTML/CSS และข้อความเท่านั้น
 ```
 
 ถ้าไม่มี actor/role ที่ชัด หรือภาพไม่ได้ช่วยเพิ่มความเข้าใจ ให้ข้ามคำถามและไม่สร้างภาพ
 
+ถ้าจาก evidence เห็นว่าภาพเดียวอาจไม่พอ ให้ถามเพิ่มก่อนสร้างภาพที่ 2:
+
+```text
+ภาพรวมระบบนี้อาจต้องใช้ภาพ AI มากกว่า 1 ภาพ ต้องการเพิ่มภาพหรือไม่?
+1. 1 ภาพ — ใช้ example.png ภาพเดียว
+2. มากกว่า 1 ภาพ — โปรดระบุจำนวนและขอบเขตของแต่ละภาพ
+3. none — ไม่สร้างภาพ AI
+```
+
 ## AI illustration rules
 
+- ขอบเขตของภาพ AI คือ section `ภาพรวมระบบ / System Overview / ใครทำอะไร`
+  เท่านั้น ห้ามสร้างภาพเพิ่มสำหรับแต่ละ step, UI, screenshot หรือ diagram
+- ค่าเริ่มต้นให้สร้างเพียง 1 ภาพ เช่น
+  `docs/<feature-name>/assets/illustrations/example.png`
+- หากเห็นว่าจำเป็นต้องใช้ภาพมากกว่า 1 ภาพ ต้องหยุดและถามผู้ใช้ก่อนทุกครั้ง
+  โดยระบุจำนวนและ scope ของภาพที่จะเพิ่ม ห้ามอนุมานว่าผู้ใช้อนุมัติแล้ว
 - เมื่อเลือก `ai-illustration` ให้ใช้ image-generation capability ของ agent ถ้ามี
   ถ้าไม่มี ให้แจ้งข้อจำกัดและใช้ `none` หรือถามผู้ใช้ให้แนบภาพแทน
 - prompt ต้องอ้างอิงเฉพาะ actor, system, boundary, responsibility และ handoff
   ที่ยืนยันได้จาก source code; ห้ามเติม service, role, logo, vendor หรือ data flow ใหม่
 - ให้ AI สร้างภาพเชิง concept/editorial ที่ไม่มีข้อความสำคัญในภาพ แล้ว render
   labels, legend และคำอธิบายด้วย HTML เพื่อให้แก้ไขและเข้าถึงได้
-- output แนะนำที่ `docs/<feature-name>/assets/illustrations/system-overview.png`
+- output แนะนำที่ `docs/<feature-name>/assets/illustrations/example.png`
   และฝังใน HTML ด้วย alt text ที่อธิบายภาพตาม evidence
 - ใต้ภาพต้องติดป้าย `AI-GENERATED ILLUSTRATION · CONCEPTUAL` และระบุว่า
   Mermaid/text/evidence เป็นแหล่งอ้างอิงจริง ภาพนี้เป็นสื่อช่วยอธิบายเท่านั้น
@@ -386,6 +401,36 @@ IBM Plex Mono สำหรับ technical text ส่วน `slide` ใช้ t
 สำหรับสี ฟอนต์ spacing, fixed chrome, navigation และ animation แล้วแทนที่เนื้อหา
 เฉพาะ feature ใหม่ ห้ามนำข้อความหรือข้อมูล Cognito demo จาก template ไปใช้โดยไม่มี
 evidence จาก source code
+
+## HTML Design Quality Gate (Mandatory)
+
+การสร้าง HTML ไม่จบที่การเติมเนื้อหาลงใน template ต้องใช้ skill ประกอบดังนี้:
+
+- `business-docs-th` — เจ้าของ evidence, business meaning, flow และ technical accuracy
+- `hallmark` — เจ้าของ visual structure, hierarchy, typography, responsive และ anti-slop review
+- `anthropic-frontend-design` — ช่วยกำหนด aesthetic direction, composition, colour, type pairing
+  และ interaction refinement ให้หน้าไม่ดูเป็น generic AI layout
+
+ก่อนเขียน HTML ต้องทำ design pass สั้น ๆ:
+
+1. อ่าน target/template เดิมและ `assets/templates/order-fulfillment-run-example.html`
+   เพื่อเทียบระดับ hierarchy, density, visual rhythm และ interaction—not copy data
+2. ระบุ audience, งานหลักของหน้า, tone, visual direction และ section rhythm ให้ชัด
+3. เลือก layout ที่มีลำดับชั้นและจุดเน้นตาม feature จริง ห้ามไหลไปเป็น
+   `hero + กล่อง card ซ้ำ ๆ + CTA` โดยอัตโนมัติ
+4. ใช้ token, typography, colour, spacing, motion และ accessibility ตามกติกา
+   ของ `hallmark`; ห้ามสร้าง metric, UI state, screenshot หรือ visual evidence ที่ไม่มี source รองรับ
+5. ถ้าเป็น `slide` ให้รักษา shell/interaction ที่จำเป็นของ `slide-template.html`
+   แต่ redesign เนื้อหา, composition และ visual hierarchy ให้เหมาะกับ feature ใหม่
+
+หลังสร้าง HTML ต้องทำ visual QA ก่อนส่ง:
+
+- รัน `./scripts/check-html.sh <file.html>` และตรวจ JavaScript syntax
+- ถ้ามี browser/UI automation ให้เปิดดูจริงและตรวจอย่างน้อย desktop กับความกว้าง
+  320, 375, 414 และ 768 px; แก้ overflow, hierarchy, spacing, contrast,
+  focus state และ reduced-motion ให้เรียบร้อย
+- ถ้าไม่มีความสามารถ render ให้ระบุ `TBD / ไม่สามารถทำ visual QA จาก environment นี้ได้`
+  ห้ามอ้างว่าหน้าผ่าน visual QA
 
 ## กฎการสร้าง HTML (Mandatory)
 

@@ -9,10 +9,27 @@
 ownership หรือ handoff ได้:
 
 ```text
-จากภาพรวมระบบและส่วน "ใครทำอะไร" ต้องการเพิ่มภาพประกอบที่ generate
-จาก AI ใน HTML เพื่อช่วยเล่า ownership และ handoff ให้เห็นเร็วขึ้นไหม?
-1. ai-illustration — เพิ่มภาพประกอบเชิงแนวคิดจาก evidence ใน source code
+จากภาพรวมระบบและส่วน "ใครทำอะไร" ต้องการเพิ่มภาพประกอบ AI จำนวน 1 ภาพ
+ใน HTML เพื่อช่วยเล่า ownership และ handoff ให้เห็นเร็วขึ้นไหม?
+1. ai-illustration — สร้างภาพเดียวสำหรับภาพรวมระบบ (เช่น example.png)
 2. none — ใช้ Mermaid, HTML/CSS และข้อความเท่านั้น
+```
+
+ค่าเริ่มต้นให้ใช้ภาพเดียวและใช้เฉพาะส่วน `ภาพรวมระบบ / System Overview /
+ใครทำอะไร` เท่านั้น เช่น `example.png` ห้ามสร้างภาพแยกสำหรับแต่ละ step, UI,
+screenshot หรือ diagram
+
+หากต้องการใช้มากกว่า 1 ภาพ ต้องหยุดถามผู้ใช้ก่อนสร้างภาพเพิ่ม โดยระบุจำนวนและ
+ขอบเขตของแต่ละภาพให้ชัดเจน ห้ามถือว่าการเลือก `ai-illustration` เป็นการอนุมัติ
+ภาพหลายภาพโดยอัตโนมัติ
+
+คำถามเมื่อภาพเดียวอาจไม่พอ:
+
+```text
+ภาพรวมระบบนี้อาจต้องใช้ภาพ AI มากกว่า 1 ภาพ ต้องการเพิ่มภาพหรือไม่?
+1. 1 ภาพ — ใช้ example.png ภาพเดียว
+2. มากกว่า 1 ภาพ — โปรดระบุจำนวนและขอบเขตของแต่ละภาพ
+3. none — ไม่สร้างภาพ AI
 ```
 
 ## Prompt contract
@@ -40,7 +57,7 @@ Unknowns: <สิ่งที่ยังยืนยันไม่ได้ �
 ```html
 <figure class="ai-illustration-frame">
   <div class="ai-illustration-badge">AI-GENERATED ILLUSTRATION · CONCEPTUAL</div>
-  <img src="./assets/illustrations/system-overview.png"
+  <img src="./assets/illustrations/example.png"
        alt="ภาพเชิงแนวคิดแสดง <actor> ส่งต่องานให้ <system> ตาม flow ที่ยืนยันจาก source code">
   <figcaption class="ai-illustration-caption">
     ภาพประกอบเชิงแนวคิดเพื่อช่วยอ่าน ownership และ handoff — ไม่ใช่ภาพหน้าจอจริง
@@ -54,7 +71,7 @@ Unknowns: <สิ่งที่ยังยืนยันไม่ได้ �
 
 ## Output and safety
 
-- output: `docs/<feature-name>/assets/illustrations/system-overview.png`
+- output: `docs/<feature-name>/assets/illustrations/example.png`
 - ตรวจภาพและ prompt ไม่ให้มี secret, token, PII, production data หรือ local path
 - ถ้า agent ไม่มี image-generation capability ให้ใช้ `none` หรือรอภาพที่ผู้ใช้แนบ
 - ถ้าภาพสื่อความหมายเกิน evidence ให้ regenerate ด้วย prompt ที่แคบลง หรือลบภาพ
