@@ -1,14 +1,15 @@
 ---
 name: business-docs-th
 description: >
-  สร้างเอกสาร Business ภาษาไทยจาก source code จริง สองระดับคุณภาพ:
-  lite = ระดับกลาง กระชับ อ่านเร็ว explore + Markdown + Mermaid flow diagram
-  (+ ถามเรื่อง HTML template),
-  full = ระดับเนียบที่สุด ห้ามหยาบ explore ครบทุกหัวข้อที่มี evidence, ข้อความสำคัญ
-  traceable ไปที่ code จริง, วิเคราะห์ UI frontend, เลือก simulation/snapshot,
-  HTML/Slide ผ่าน design pass + visual QA + cross-check Markdown กับ HTML.
-  ใช้สำหรับ feature documentation, business flow, system architecture,
-  async/queue flow, integration, handover, และ meeting materials.
+  อ่าน source code จริง แล้วเล่าเป็นเอกสาร Business ภาษาไทยที่คนทั้งทีมเข้าใจ —
+  PO, BA, QA, Support และ dev ใหม่ อ่านจบแล้วรู้ว่าใครกดอะไร ระบบทำอะไรต่อ
+  ผิดพลาดแล้วเป็นยังไง โดยไม่ต้องรอเจ้าของโค้ดมาอธิบาย. เลือกได้สองโหมด:
+  lite = กระชับ อ่านจบ 5–10 นาที (Markdown + Mermaid flow diagram),
+  full = เนียบที่สุดพร้อมใช้ handover (ข้อความสำคัญ traceable ถึง file/line,
+  วิเคราะห์ UI frontend, เลือก simulation/snapshot, HTML/Slide ผ่าน design pass
+  + visual QA + cross-check Markdown กับ HTML). ใช้สำหรับ feature documentation,
+  business flow, system architecture, async/queue flow, integration, onboarding,
+  handover, และ meeting materials.
 ---
 
 # Business Docs TH
@@ -32,10 +33,41 @@ Database / Queue / Consumer / Scheduler / Event / External integration
 
 # Level Selection (Mandatory ก่อนเริ่ม)
 
+**อ่านโค้ดจริง แล้วเล่าเป็นเรื่องที่ทั้งทีมเข้าใจ** — อ่านจบแล้วตอบได้ว่า
+ใครกดอะไร → ระบบทำอะไรต่อ → งานเข้า Queue ตอนไหน → ผิดพลาดแล้วผู้ใช้รู้ได้ยังไง
+โดยไม่ต้องรอเจ้าของโค้ดมาอธิบาย และทุกข้อความสำคัญชี้กลับไปที่ไฟล์จริงได้
+
+เอกสารที่ได้เป็น **ภาษาไทยที่ใช้ใน meeting ได้ทันที** ไม่ใช่โค้ดแปลไทย:
+มี Business Flow เป็นภาพ, กฎของระบบ, สถานะงาน, กรณีผิดปกติ, และ Technical Reference
+สำหรับ dev ที่ต้องลงมือต่อ
+
+## เลือกโหมด — ตอบข้อเดียว
+
+| อยากได้อะไร                              | โหมด   | ได้กลับไป                                                                                        |
+| ---------------------------------------- | ------ | ------------------------------------------------------------------------------------------------ |
+| คุยในทีมวันนี้ เข้าใจ flow เร็ว ๆ        | `lite` | Markdown ไทย + Mermaid 1–3 ภาพ + metadata + ประวัติการแก้ไข — อ่านจบ 5–10 นาที                   |
+| ส่งมอบ / handover / เอกสารอ้างอิงระยะยาว | `full` | ครบทุกหัวข้อที่มี evidence + traceable ถึง file/line + UI artifact + HTML/Slide ผ่าน design pass |
+| ยังไม่แน่ใจ                              | `lite` | เอกสาร Markdown โครงเดียวกัน — ยกระดับเป็น `full` ทีหลังได้ ไม่ต้องรื้อทำใหม่                    |
+
+**พูดธรรมชาติได้เลย ไม่ต้องจำชื่อโหมด:**
+
+| ถ้าพูดประมาณนี้                                             | ได้                                               |
+| ----------------------------------------------------------- | ------------------------------------------------- |
+| "อธิบาย flow หน่อย" · "สรุปให้ทีมฟัง" · "เอกสารกลาง ๆ พอ"   | `lite`                                            |
+| "ทำเอกสาร handover" · "เอาละเอียด เนียบ ๆ" · "ใช้ส่งต่อได้" | `full`                                            |
+| "ขอ HTML ด้วย" · "ทำ slide นำเสนอ" · "ทำเป็นเว็บ docs"      | โหมดเดิม + HTML template (ถามสไตล์ให้เลือกก่อนทำ) |
+
+**อยากเห็นของจริงก่อนตัดสินใจ** — เปิด `examples/README.md` จะมีตัวอย่างระบบเดียวกัน
+ทำทั้งสองโหมดให้เทียบความลึกตรง ๆ และเปิดดูหน้าตา HTML จริงได้ที่
+`assets/templates/order-fulfillment-run-example.html`
+
+## กติกาการเลือกโหมด (Mandatory)
+
 เมื่อผู้ใช้เรียก skill นี้โดยไม่ได้ระบุ level ให้ถามผู้ใช้ก่อนเริ่มงานเสมอ
 โดยใช้วิธีถามคำถามมาตรฐานของ agent นั้น ๆ ถ้า agent ไม่มี structured question
 tool ให้ถามเป็นข้อความธรรมดาแทน ห้ามผูก workflow นี้กับชื่อ tool หรือ product
-ใด product หนึ่ง
+ใด product หนึ่ง และให้บอกผู้ใช้ด้วยว่าถ้ายังไม่แน่ใจให้เลือก `lite`
+(ยกระดับเป็น `full` ทีหลังได้โดยไม่ต้องรื้อเอกสาร)
 
 - `lite` — ระดับกลาง: explore + Markdown ภาษาไทย + Mermaid flow diagram
   กระชับ ตรงงาน พอสำหรับคุยในทีม แล้วถามต่อว่าจะสร้าง HTML หรือไม่

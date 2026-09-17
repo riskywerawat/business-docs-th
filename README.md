@@ -4,6 +4,36 @@ Skill สำหรับสร้างเอกสาร Business ภาษา�
 self-contained — ใช้รูปแบบ Agent Skills มาตรฐาน จึงติดตั้งได้กับ Codex,
 GitHub Copilot และ Claude Code ผ่าน `npx skills`
 
+> อ่านโค้ดจริง แล้วเล่าเป็นเอกสารที่ทั้งทีมเข้าใจ — PO, BA, QA, Support และ dev ใหม่
+> อ่านจบแล้วรู้ว่าใครกดอะไร ระบบทำอะไรต่อ งานเข้า Queue ตอนไหน ผิดพลาดแล้วเป็นยังไง
+
+## ทำไมต้องใช้
+
+| สิ่งที่เจอประจำ                    | skill นี้ทำอะไรให้                                                              |
+| ---------------------------------- | ------------------------------------------------------------------------------- |
+| ต้องรอเจ้าของโค้ดมาไล่ flow ให้ฟัง | explore repo จริงเอง แล้วเขียน Business Flow เป็นภาพภาษาไทย                     |
+| เอกสารหาย ไม่รู้ว่าตรงกับ code ไหน | metadata block ต้นเอกสารบอก commit, เจ้าของ, วันที่, ticket ทุกฉบับ             |
+| เอกสารเก่าแล้วไม่มีใครกล้าแก้      | `## ประวัติการแก้ไข` ปิดท้าย ทุกครั้งที่แก้ต้องอัปเดตยอดบนให้ตรงกัน             |
+| คำเรียกไม่ตรงกันข้ามเอกสาร         | glossary กลาง `docs/glossary.md` + แสดงค่า enum จริงคู่คำไทย                    |
+| กลัวหลุดข้อมูลลูกค้า/secret        | กติกาข้อมูลอ่อนไหวบังคับทุกไฟล์ ไม่ใช่แค่ screenshot                            |
+| อยากได้เอกสารสวย ๆ ใช้นำเสนอ       | เลือกได้ swagger / docusaurus / dashboard / slide พร้อม design pass + visual QA |
+
+หลักการที่ยึดทุกงาน: **Evidence before assumption** — ห้ามเดาพฤติกรรม ห้ามวาด flow
+ที่ไม่มี code รองรับ ที่ยืนยันไม่ได้ให้เขียน `TBD` ตรง ๆ ไม่แต่งให้ดูครบ
+
+## เริ่มใช้
+
+ติดตั้งแล้วพูดธรรมดาได้เลย ไม่ต้องจำคำสั่ง:
+
+```text
+"อธิบาย flow ของ feature นี้ให้หน่อย"          → lite
+"ทำเอกสาร handover ของ feature นี้"            → full
+"ทำเอกสารนี้เป็น slide นำเสนอด้วย"             → โหมดเดิม + HTML/Slide
+```
+
+ตัวอย่างผลลัพธ์เทียบสองระดับอยู่ที่ `examples/README.md`
+(ระบบสมมติตัวเดียวกัน ทำทั้ง `lite` และ `full` ให้เทียบความลึกตรง ๆ)
+
 ## Structure
 
 ```text
@@ -17,10 +47,12 @@ business-docs-th/
 │   ├── template-swagger.md         #   API reference / spec style
 │   ├── template-docusaurus.md      #   docs site style
 │   ├── template-dashboard.md       #   assessment / control center style
-│   └── template-slide.md           #   presentation / sprint deck style├── examples/                       # golden examples (fictional demo system)
+│   └── template-slide.md           #   presentation / sprint deck style
+├── examples/                       # golden examples (fictional demo system)
 │   ├── README.md                   #   how to use + disclaimer
 │   ├── lite/README.md              #   ตัวอย่างระดับ lite (กลาง ๆ)
-│   └── full/README.md              #   ตัวอย่างระดับ full (เนียบที่สุด)├── assets/templates/               # supplied reusable HTML templates/examples
+│   └── full/README.md              #   ตัวอย่างระดับ full (เนียบที่สุด)
+├── assets/templates/               # supplied reusable HTML templates/examples
 │   ├── slide-template.html         #   supplied slide template
 │   ├── business-docs-ui.css        #   shared UI theme (ยกเว้น slide)
 │   └── order-fulfillment-run-example.html # dummy simulation UI example
@@ -36,19 +68,16 @@ business-docs-th/
     └── check-html.sh               # verify HTML includes mermaid/tailwind deps
 ```
 
-## Levels
+## เลือกโหมด (Levels)
 
 สองระดับต่างกันที่ **ความลึกและความเนียบของเอกสาร** ไม่ใช่แค่ artifact ที่ได้เพิ่ม:
 
-- **lite** — ระดับกลาง: explore codebase + Markdown (Thai) + Mermaid flow diagram
-  กระชับ อ่านจบ 5–10 นาที ครบ flow ที่ต้องรู้ แต่ไม่ exhaustive
-  แล้วถามว่าต้องการ HTML template ไหม (swagger / docusaurus / dashboard / slide)
-- **full** — ระดับเนียบที่สุด: lite + วิเคราะห์หน้า UI frontend + เลือก UI artifact
-  (simulation/snapshot/both/none ตามหลักฐาน) + HTML template + ต้องผ่าน
-  `Full Polish Pass` (coverage, traceability, diagrams, language, artifacts,
-  Markdown ↔ HTML, metadata & safety) ก่อนรายงานผล
+| โหมด   | เหมาะกับ                             | ได้อะไร                                                                                                                                                                                       |
+| ------ | ------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `lite` | คุยในทีมวันนี้ เข้าใจ flow เร็ว ๆ    | explore codebase + Markdown (Thai) + Mermaid flow diagram กระชับ อ่านจบ 5–10 นาที ครบ flow ที่ต้องรู้ แล้วถามว่าจะทำ HTML template ไหม (swagger / docusaurus / dashboard / slide)             |
+| `full` | ส่งมอบ / handover / เอกสารอ้างอิงยาว | ทุกอย่างของ `lite` + traceable ถึง file/line + วิเคราะห์หน้า UI frontend + เลือก UI artifact (simulation/snapshot/both/none ตามหลักฐาน) + HTML template + ต้องผ่าน `Full Polish Pass` ก่อนส่ง |
 
-`Depth Quality Bar` ใน `SKILL.md` เปรียบเทียบทั้ง 12+ มิติ และระบุชัดว่า
+`Depth Quality Bar` ใน `SKILL.md` เปรียบเทียบทั้ง 15 มิติ และระบุชัดว่า
 `full` ห้ามมี "งานหยาบ" แบบใด (หัวข้อตกหล่น, ไม่มีที่มา, diagram ไม่มี caption,
 ค่าประมาณแทนค่าจริง, ปล่อย `TBD` ที่ค้นได้)
 
