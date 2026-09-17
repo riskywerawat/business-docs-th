@@ -818,8 +818,15 @@ evidence จาก source code
   หรือ snapshot ตามกฎ CDN ด้านบน — **อย่าลบ dependency ที่จำเป็นต่อการ render**
 - ถ้าใช้ Mermaid ใน Markdown อยู่แล้ว ไฟล์จาก diagram-design ใช้เสริม
   ใน HTML template ไม่ใช่แทนที่ Mermaid ใน Markdown
+- **ตรวจสำเนา vendored**: `./scripts/fetch-diagram-design.sh --verify` ต้องขึ้น `ok`
+  และ `--verify-upstream` เมื่อต้องพิสูจน์ว่าเนื้อหาตรงกับ upstream commit ที่ pin จริง
 - อัปเดตเวอร์ชัน: `./scripts/fetch-diagram-design.sh --update`
-  (จะ sync จาก upstream — จำเป็นต้อง update PIN ใน script และ ATTRIBUTION.md ตามที่มันแจ้ง)
+  → vendor ใหม่ที่ commit ที่ pin ไว้ (reproducible — ไม่ขยับตาม upstream เอง)
+- ตั้งใจจะขยับ pin: `./scripts/fetch-diagram-design.sh --update-latest`
+  → sync upstream HEAD แล้วทำตามขั้นตอน bump `PIN` ใน script + `ATTRIBUTION.md` ที่มันพิมพ์ให้
+  (`--verify` จะ fail จนกว่าจะ bump ครบ — เป็น forcing function ที่ตั้งใจ)
+- `--copy` อ่านได้เฉพาะใน `assets/diagram-design/` เท่านั้น — absolute path, `..`
+  และ symlink ถูกปฏิเสธ
 
 ---
 
@@ -828,7 +835,7 @@ evidence จาก source code
 | Script                                 | หน้าที่                                                                                                                              |
 | -------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
 | `scripts/new-doc.sh <feature-name>`    | สร้าง `docs/<feature>/` + README template + metadata + ประวัติการแก้ไข + `docs/glossary.md` + `docs/README.md` (เมื่อเกิน 3 feature) |
-| `scripts/fetch-diagram-design.sh`      | จัดการ vendored diagram-design (`--list`, `--copy`, `--update`)                                                                      |
+| `scripts/fetch-diagram-design.sh`      | จัดการ vendored diagram-design (`--list`, `--copy`, `--verify`, `--verify-upstream`, `--update`, `--update-latest`)                  |
 | `scripts/vendor-cdn.sh <dir> <url>...` | snapshot CDN asset ลง `assets/vendor/`                                                                                               |
 | `scripts/check-html.sh <file>`         | ตรวจว่า HTML include dependency ครบ (mermaid/tailwind)                                                                               |
 

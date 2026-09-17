@@ -63,7 +63,7 @@ business-docs-th/
 │   └── LICENSE.upstream            #   upstream MIT license text
 └── scripts/
     ├── new-doc.sh                  # scaffold docs/<feature>/ + metadata + glossary/index
-    ├── fetch-diagram-design.sh     # manage vendored copy (--list/--copy/--update)
+    ├── fetch-diagram-design.sh     # manage vendored copy (--list/--copy/--verify/--update)
     ├── vendor-cdn.sh               # snapshot CDN assets for offline HTML
     └── check-html.sh               # verify HTML includes mermaid/tailwind deps
 ```
@@ -165,6 +165,7 @@ npx skills@latest add . --skill business-docs-th --agent codex --yes
    (รวมถึงไฟล์ใน `examples/` ซึ่งต้องเป็นข้อมูลสมมติเท่านั้น)
 4. reference และ asset ที่ skill ต้องใช้ถูก commit อยู่ใน repo แล้ว
 5. ไฟล์ที่ vendor จาก `diagram-design` มี attribution และ license ครบ
+   และ `./scripts/fetch-diagram-design.sh --verify` ขึ้น `ok`
 6. push ไป GitHub แล้วลอง `npx skills@latest add riskywerawat/business-docs-th --list`
 
 Skill แบบพื้นฐานใช้ `SKILL.md` เดียวร่วมกันได้ทั้งสาม agent ไม่ต้องทำไฟล์
@@ -186,11 +187,19 @@ Skill แบบพื้นฐานใช้ `SKILL.md` เดียวร่�
 ./scripts/fetch-diagram-design.sh --copy \
   assets/example-architecture-full.html \
   docs/order-fulfillment/assets/architecture/     # ลอกพร้อม attribution header
-./scripts/fetch-diagram-design.sh --update        # sync จาก upstream (network)
+./scripts/fetch-diagram-design.sh --verify        # ตรวจว่า vendored ตรงกับ PIN
+./scripts/fetch-diagram-design.sh --verify-upstream # พิสูจน์กับ upstream จริง (network)
+./scripts/fetch-diagram-design.sh --update        # vendor ใหม่ที่ commit ที่ pin ไว้ (network)
 ./scripts/vendor-cdn.sh docs/order-fulfillment \
   https://cdn.jsdelivr.net/npm/mermaid@12.0.0/dist/mermaid.min.js
 ./scripts/check-html.sh docs/order-fulfillment/index.html
 ```
+
+vendored copy ของ `diagram-design` ผูกกับ upstream commit เดียว (`PIN` ใน
+`scripts/fetch-diagram-design.sh` และ `ATTRIBUTION.md`) — `--update` vendor
+เฉพาะ commit นั้น, `--verify-upstream` พิสูจน์ว่าเนื้อหาตรงจริง และ `--copy`
+อ่านได้เฉพาะในโฟลเดอร์ vendored เท่านั้น ถ้าตั้งใจขยับเวอร์ชันให้ใช้
+`--update-latest` แล้วทำตามขั้นตอน bump PIN ที่มันพิมพ์ให้
 
 กฎหลัก: Evidence before assumption — ห้ามเดา behavior, ห้ามวาด flow ที่ไม่มี
 code รองรับ, unknown = TBD, `## Technical Reference` เป็นหัวข้อเนื้อหาสุดท้าย
