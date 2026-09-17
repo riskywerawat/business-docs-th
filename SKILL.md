@@ -768,6 +768,10 @@ evidence จาก source code
    ./scripts/vendor-cdn.sh <docs-feature-dir> \
      https://cdn.jsdelivr.net/npm/mermaid@12.0.0/dist/mermaid.min.js ...
    ```
+   ต่อท้าย URL ด้วย `#sha256=<hex>` เมื่อต้องการยืนยันว่าไฟล์ที่ได้ตรงกับที่ pin
+   ไว้จริง (script ปฏิเสธถ้า hash ไม่ตรง) — ถ้าไม่ใส่ script จะพิมพ์ hash ที่ได้
+   ให้คัดลอกไปใช้รอบหน้า ต้องเป็น `https://` เท่านั้น `http://` ถูกปฏิเสธ
+   และชื่อไฟล์ที่ได้จาก URL ต้องผ่าน charset ที่ปลอดภัย (กัน `../`, `%2F`, `-o`)
 3. **Mermaid ใน HTML** — ต้อง include mermaid และเรียก
    `mermaid.initialize({ startOnLoad: true })` แล้ววาง diagram เป็น
    `<pre class="mermaid">...</pre>` — อย่าลืม dependency นี้ทุกครั้งที่มี diagram
@@ -836,7 +840,7 @@ evidence จาก source code
 | -------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
 | `scripts/new-doc.sh <feature-name>`    | สร้าง `docs/<feature>/` + README template + metadata + ประวัติการแก้ไข + `docs/glossary.md` + `docs/README.md` (เมื่อเกิน 3 feature) |
 | `scripts/fetch-diagram-design.sh`      | จัดการ vendored diagram-design (`--list`, `--copy`, `--verify`, `--verify-upstream`, `--update`, `--update-latest`)                  |
-| `scripts/vendor-cdn.sh <dir> <url>...` | snapshot CDN asset ลง `assets/vendor/`                                                                                               |
+| `scripts/vendor-cdn.sh <dir> <url>...` | snapshot CDN asset ลง `assets/vendor/` (https + pinned, ใส่ `#sha256=<hex>` ตรวจ integrity ได้)                                      |
 | `scripts/check-html.sh <file>`         | ตรวจว่า HTML include dependency ครบ (mermaid/tailwind)                                                                               |
 
 รันได้จาก root ของ repo ที่กำลังทำ docs

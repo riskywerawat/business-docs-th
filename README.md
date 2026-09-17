@@ -64,7 +64,7 @@ business-docs-th/
 └── scripts/
     ├── new-doc.sh                  # scaffold docs/<feature>/ + metadata + glossary/index
     ├── fetch-diagram-design.sh     # manage vendored copy (--list/--copy/--verify/--update)
-    ├── vendor-cdn.sh               # snapshot CDN assets for offline HTML
+    ├── vendor-cdn.sh               # snapshot CDN assets (https + pinned + #sha256)
     └── check-html.sh               # verify HTML includes mermaid/tailwind deps
 ```
 
@@ -200,6 +200,16 @@ vendored copy ของ `diagram-design` ผูกกับ upstream commit เ�
 เฉพาะ commit นั้น, `--verify-upstream` พิสูจน์ว่าเนื้อหาตรงจริง และ `--copy`
 อ่านได้เฉพาะในโฟลเดอร์ vendored เท่านั้น ถ้าตั้งใจขยับเวอร์ชันให้ใช้
 `--update-latest` แล้วทำตามขั้นตอน bump PIN ที่มันพิมพ์ให้
+
+`vendor-cdn.sh` รับ URL แบบ pinned (`https://` เท่านั้น ไม่รับ `@latest`) และ
+ต่อท้ายด้วย `#sha256=<hex>` เพื่อยืนยัน integrity ได้ — script จะปฏิเสธถ้า hash
+ไม่ตรง, เขียนไฟล์ลง `assets/vendor/` เท่านั้น และไม่ทิ้งไฟล์ `.part` ค้าง
+ถ้าไม่ใส่ hash script จะพิมพ์ค่าที่คำนวณได้ให้คัดลอกไปใช้รอบหน้า:
+
+```bash
+curl -fsSL "<url>" | shasum -a 256     # ขอ hash ของไฟล์ที่ pin ไว้
+./scripts/vendor-cdn.sh docs/order-fulfillment "<url>#sha256=<hex>"
+```
 
 กฎหลัก: Evidence before assumption — ห้ามเดา behavior, ห้ามวาด flow ที่ไม่มี
 code รองรับ, unknown = TBD, `## Technical Reference` เป็นหัวข้อเนื้อหาสุดท้าย
