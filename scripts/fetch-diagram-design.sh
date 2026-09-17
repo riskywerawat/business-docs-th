@@ -132,8 +132,16 @@ stage_vendored() {
   printf '%s\n' "$commit" >"$stage/UPSTREAM_COMMIT"
 }
 
-# Replace the vendored copy with the staged tree.
+# Replace the vendored copy with the staged tree. Guarded so that a wrong or
+# empty VENDORED path can never turn into a recursive delete of the wrong dir.
 install_staged() {
+  case "$VENDORED" in
+    "$SKILL_ROOT"/assets/diagram-design) ;;
+    *) die "refusing to replace unexpected path: $VENDORED" ;;
+  esac
+  if [[ ! -d "$TMP/stage/diagram-design" ]]; then
+    die "staged tree missing — aborting before touching $VENDORED"
+  fi
   rm -rf "$VENDORED"
   mv "$TMP/stage/diagram-design" "$VENDORED"
 }
@@ -143,8 +151,11 @@ case "${1:-}" in
     usage
     ;;
   --list)
-    find "$VENDORED/assets" "$VENDORED/references" -type f |
-      sed "s|$VENDORED/||" | sort
+    # no sed here: interpolating the repo path into a sed script would let a
+    # path containing | or & rewrite the pattern
+    find "$VENDORED/assets" "$VENDORED/references" -type f | sort | while IFS= read -r f; do
+      printf '%s\n' "${f#"$VENDORED"/}"
+    done
     ;;
   --verify)
     if [[ ! -f "$MARKER" ]]; then
