@@ -50,8 +50,8 @@ business-docs-th/
 │   └── template-slide.md           #   presentation / sprint deck style
 ├── examples/                       # golden examples (fictional demo system)
 │   ├── README.md                   #   how to use + disclaimer
-│   ├── lite/README.md              #   ตัวอย่างระดับ lite (กลาง ๆ)
-│   └── full/README.md              #   ตัวอย่างระดับ full (เนียบที่สุด)
+│   ├── lite/expense-reimbursement.md    #   ตัวอย่างระดับ lite (กลาง ๆ) — ชื่อไฟล์ตามกฎ <feature>.md
+│   └── full/expense-reimbursement.md    #   ตัวอย่างระดับ full (เนียบที่สุด)
 ├── assets/templates/               # supplied reusable HTML templates/examples
 │   ├── slide-template.html         #   supplied slide template
 │   ├── business-docs-ui.css        #   shared UI theme (ยกเว้น slide)
@@ -81,7 +81,7 @@ business-docs-th/
 `full` ห้ามมี "งานหยาบ" แบบใด (หัวข้อตกหล่น, ไม่มีที่มา, diagram ไม่มี caption,
 ค่าประมาณแทนค่าจริง, ปล่อย `TBD` ที่ค้นได้)
 
-ใช้ `examples/lite/README.md` และ `examples/full/README.md` เป็นตัวเทียบ —
+ใช้ `examples/lite/expense-reimbursement.md` และ `examples/full/expense-reimbursement.md` เป็นตัวเทียบ —
 ทั้งคู่เป็นระบบสมมติเพื่อการสอน ห้ามคัดลอกเนื้อหา/ตัวเลขไปใช้งานจริง
 
 ## เอกสารที่ generate ได้มีอะไรบังคับเสมอ
@@ -95,8 +95,10 @@ business-docs-th/
   path เฉพาะเครื่อง ต้องแทนด้วย placeholder ในทุกไฟล์ (Markdown, HTML, caption, diagram)
 - **สารบัญกลาง** `docs/README.md` เมื่อมีเอกสารเกิน 3 feature
 
-ถ้าเนื้อหายาวเกินอ่านจบ ~10–15 นาที ต้องแยกเป็น `README.md` + `flow.md` / `rules.md` /
-`api.md` / `ui.md` โดย README ต้องยืนได้ด้วยตัวเองและมีสารบัญลิงก์ไฟล์ย่อย
+ไฟล์หลักของ feature ต้องชื่อเดียวกับ folder — `docs/<feature-name>/<feature-name>.md`
+(ห้ามใช้ `README.md` เป็นไฟล์หลักของ feature) ถ้าเนื้อหายาวเกินอ่านจบ ~10–15 นาที
+ให้แตก folder ย่อยตามหัวข้อธุรกิจและตั้งชื่อไฟล์ย่อยด้วยเลขลำดับ เช่น
+`<topic>/10-salary-calculated.md` — ไฟล์หลักต้องยืนได้ด้วยตัวเองและมีสารบัญลิงก์ไฟล์ย่อย
 
 ## Document section selection
 

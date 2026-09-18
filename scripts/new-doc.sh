@@ -18,14 +18,19 @@ mkdir -p "$DIR/assets/ui" "$DIR/assets/illustrations" "$DIR/assets/architecture"
 # generated HTML. Slide output may ignore it.
 # Do NOT copy it out as assets/business-docs-ui.css (see SKILL.md "Theme CSS inline").
 
-if [[ ! -f "$DIR/README.md" ]]; then
-  cat > "$DIR/README.md" <<EOF
+# Main doc file follows the folder name (see SKILL.md "การตั้งชื่อไฟล์หลัก...").
+# README.md is reserved as a folder index — never the feature's main doc.
+DOC_NAME="$(basename "$FEATURE")"
+DOC_FILE="$DIR/$DOC_NAME.md"
+
+if [[ ! -f "$DOC_FILE" ]]; then
+  cat > "$DOC_FILE" <<EOF
 > **เอกสารนี้** · Feature: $FEATURE · เจ้าของ: TBD
 > · ระดับ: lite | full · อัปเดตล่าสุด: $(date +%Y-%m-%d)
 > · อ้างอิง code: \`<repo>@<commit-short>\`
 > · Ticket/PR: TBD
 
-# $FEATURE
+# $DOC_NAME
 
 ## สรุปสั้น ๆ
 
@@ -82,7 +87,7 @@ flowchart TD
 - คำใหม่ทุกคำเพิ่มใน docs/glossary.md
 - ค่า enum จริงแสดงคู่คำไทย เช่น \`PENDING_APPROVAL\` (รออนุมัติ)
 - ไม่มี secret/PII/prod URL/path เฉพาะเครื่อง ใช้ placeholder เช่น <employee-id>
-- เทียบระดับความลึกกับ examples/<level>/README.md
+- เทียบระดับความลึกกับ examples/<level>/expense-reimbursement.md
 -->
 EOF
 fi

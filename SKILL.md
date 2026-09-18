@@ -119,7 +119,8 @@ level ไม่ได้ต่างแค่มี UI artifact หรือไ�
 
 1. Explore codebase ตาม workflow ด้านล่าง (W0–W8) เก็บ evidence เท่าที่ต้องใช้เล่า flow
 2. วาง outline ตาม `Document Outline Planning` แล้วสร้าง Markdown ภาษาไทย + Mermaid diagram
-   ที่ `docs/<feature-name>/README.md` พร้อม metadata block ต้นไฟล์, `## ประวัติการแก้ไข`
+   ที่ `docs/<feature-name>/<feature-name>.md` (ชื่อเดียวกับ folder — ดูหัวข้อ
+   `การตั้งชื่อไฟล์หลักและการแบ่งเอกสารเมื่อ feature ใหญ่`) พร้อม metadata block ต้นไฟล์, `## ประวัติการแก้ไข`
    ท้ายไฟล์ และเพิ่มคำใหม่เข้า `docs/glossary.md` (กติกาเดียวกันทั้งสอง level)
 3. ตรวจรอบเดียว: ตัดหัวข้อที่ไม่เกี่ยวกับงาน, ตรวจ diagram render ได้, ตรวจความสม่ำเสมอของคำ,
    ตรวจว่าไม่มีข้อมูลอ่อนไหวหลงเหลือ
@@ -191,7 +192,7 @@ level ไม่ได้ต่างแค่มี UI artifact หรือไ�
 
 หัวข้อนี้คือลำดับการสืบค้น **ภายใน** ของ agent เท่านั้น ไม่ใช่โครงสร้างเอกสาร
 ชื่อ step เช่น `Find Consumer`, `Queue Timing`, `Trace Async Flow`, `Failure Handling`
-ห้ามนำไปเป็นหัวข้อใน `README.md`, HTML, slide หรือ artifact ใด ๆ ทุกกรณี
+ห้ามนำไปเป็นหัวข้อในไฟล์หลักของ feature (`<feature-name>.md`), HTML, slide หรือ artifact ใด ๆ ทุกกรณี
 หัวข้อของเอกสารจริงเลือกจากหัวข้อ `Document Outline Planning` ด้านล่าง
 
 ทุก step มี gate — เข้าเงื่อนไข → สืบค้นและเก็บ evidence; ไม่เข้าเงื่อนไข → ข้าม
@@ -277,8 +278,8 @@ Producer → Queue/Topic → Consumer → Handler → DB / External Service
 
 | Level  | ไฟล์ตัวอย่าง              | ใช้เทียบเรื่อง                                          |
 | ------ | ------------------------- | ------------------------------------------------------- |
-| `lite` | `examples/lite/README.md` | ขนาดที่ "กลาง ๆ พอใช้" — กระชับแต่เล่า flow ครบ         |
-| `full` | `examples/full/README.md` | มาตรฐานความเนียบ — ครบหัวข้อ, traceable, caption ทุกภาพ |
+| `lite` | `examples/lite/expense-reimbursement.md` | ขนาดที่ "กลาง ๆ พอใช้" — กระชับแต่เล่า flow ครบ         |
+| `full` | `examples/full/expense-reimbursement.md` | มาตรฐานความเนียบ — ครบหัวข้อ, traceable, caption ทุกภาพ |
 
 ทั้งสองตัวอย่างเป็น **ระบบสมมติเพื่อการสอน** (fictional demo system) ใช้เทียบ
 _ความลึก, โครงสร้าง, การเขียน caption, ระดับ evidence_ เท่านั้น
@@ -452,23 +453,37 @@ Technical detail ที่จำเป็นยกไปไว้หัวข้
   ใน metadata ด้วยทุกครั้ง — สองที่นี้ต้องตรงกับแถวล่าสุดเสมอ
 - ห้ามลบแถวเดิมเพื่อให้ดูเรียบร้อย (ประวัติคือหลักฐาน)
 
-## การแบ่งเอกสารเมื่อ feature ใหญ่
+## การตั้งชื่อไฟล์หลักและการแบ่งเอกสารเมื่อ feature ใหญ่
 
-ถ้าเนื้อหาจะเกินอ่านจบใน ~10–15 นาที หรือคาดว่าจะเกิน ~10 หัวข้อ ให้แยกเป็นหลายไฟล์:
+ไฟล์หลักของ feature ต้องตั้งชื่อเดียวกับ folder (หรือใกล้เคียงที่สุด) —
+`docs/<feature-name>/<feature-name>.md` เช่น `docs/report-tracker/report-tracker.md`
+**ห้ามใช้ `README.md` เป็นไฟล์หลักของ feature** (`README.md` สงวนไว้เป็น index
+ของ folder ย่อยและสารบัญกลาง `docs/README.md` เท่านั้น)
+
+ถ้าเนื้อหาจะเกินอ่านจบใน ~10–15 นาที หรือคาดว่าจะเกิน ~10 หัวข้อ ให้แตกเป็น
+folder ย่อยตามหัวข้อธุรกิจของงาน และตั้งชื่อไฟล์ย่อยด้วยเลขลำดับ 10, 20, 30 ...
+เพื่อคุมลำดับการอ่าน:
 
 ```text
 docs/<feature-name>/
-├── README.md      # ภาพรวม + สรุปสั้น + สารบัญ + ลิงก์ไปไฟล์ย่อย (ต้องอ่านจบในไม่กี่นาที)
-├── flow.md        # Business Flow, Queue timing, Queue/Consumer
-├── rules.md       # กฎของระบบ, เงื่อนไข, ค่าที่ใช้จริง, กรณีผิดปกติ
-├── api.md         # Integration / External API (ถ้ามี)
-└── ui.md          # หน้าจอ, ขั้นตอนผู้ใช้, screenshot (full mode)
+├── <feature-name>.md          # ไฟล์หลัก: metadata + สรุปสั้น + ภาพรวม + สารบัญลิงก์ folder ย่อย
+├── <topic-1>/                 # ตั้งชื่อตามหัวข้อธุรกิจ เช่น calculate/, prepare/
+│   ├── 10-<slug>.md           # ขั้น/เรื่องแรก เช่น 10-salary-calculated.md
+│   ├── 20-<slug>.md           # ขั้นถัดไป เรียงเลขต่อเนื่อง
+│   └── README.md              # (ถ้าต้องการ) สารบัญย่อยของ topic นี้
+├── <topic-2>/
+│   └── ...
+└── index.html                 # HTML (ถ้าเลือกทำ) — ลิงก์ไปไฟล์ย่อยเหล่านี้ได้
 ```
 
-- `README.md` ต้องยืนได้ด้วยตัวเอง: metadata, สรุปสั้น ๆ, ภาพรวม, ผู้เกี่ยวข้อง และสารบัญที่ลิงก์ไฟล์ย่อย
-- เนื้อหาส่วนที่แยกออกไปต้อง **ไม่ถูกคัดลอกซ้ำ** ใน README — README สรุปย่อแล้วลิงก์
+กติกา:
+
+- ไฟล์หลัก `<feature-name>.md` ต้องยืนได้ด้วยตัวเอง: metadata, สรุปสั้น ๆ, ภาพรวม,
+  ผู้เกี่ยวข้อง และสารบัญที่ลิงก์ folder ย่อย/ไฟล์ย่อย
+- เนื้อหาส่วนที่แยกออกไปต้อง **ไม่ถูกคัดลอกซ้ำ** ในไฟล์หลัก — ไฟล์หลักสรุปย่อแล้วลิงก์
 - ห้ามแยกไฟล์เพียงเพื่อให้ดูเป็นระเบียบ ถ้าเนื้อหายังอ่านจบใน 10 นาทีให้อยู่ไฟล์เดียว
-- metadata block ให้อยู่ที่ `README.md` เท่านั้น ไฟล์ย่อยอ้างหัวเรื่องของตัวเองได้
+  คือ `<feature-name>.md`
+- metadata block ให้อยู่ที่ไฟล์หลักเท่านั้น ไฟล์ย่อยอ้างหัวเรื่องของตัวเองได้
 - ถ้ามีเอกสารใน `docs/` เกิน 3 feature ให้สร้าง `docs/README.md` เป็นสารบัญกลาง
   (ชื่อ feature, ไฟล์, เจ้าของ, อัปเดตล่าสุด) และอัปเดตทุกครั้งที่เพิ่ม/แก้เอกสาร
 
@@ -520,8 +535,8 @@ docs/
 ├── README.md               (สารบัญกลาง เมื่อมีเอกสารเกิน 3 feature)
 ├── glossary.md             (คำศัพท์กลางของระบบ)
 └── <feature-name>/
-    ├── README.md           (metadata + สรุป + ภาพรวม + สารบัญ)
-    ├── flow.md / rules.md / api.md / ui.md   (ถ้าแยกเอกสาร ตามหัวข้อ "การแบ่งเอกสารเมื่อ feature ใหญ่")
+    ├── <feature-name>.md   (ไฟล์หลัก: metadata + สรุป + ภาพรวม + สารบัญ — ชื่อเดียวกับ folder)
+    ├── <topic>/NN-<slug>.md (folder ย่อยเมื่องานซับซ้อน — ดูหัวข้อ "การตั้งชื่อไฟล์หลักและการแบ่งเอกสารเมื่อ feature ใหญ่")
     ├── index.html          (ถ้าผู้ใช้เลือกทำ HTML template — theme CSS inline ใน <style> ของไฟล์นี้)
     └── assets/
         ├── ui/             (screenshot)
@@ -854,7 +869,7 @@ evidence จาก source code
 
 | Script                                 | หน้าที่                                                                                                                              |
 | -------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
-| `scripts/new-doc.sh <feature-name>`    | สร้าง `docs/<feature>/` + README template + metadata + ประวัติการแก้ไข + `docs/glossary.md` + `docs/README.md` (เมื่อเกิน 3 feature) |
+| `scripts/new-doc.sh <feature-name>`    | สร้าง `docs/<feature>/` + ไฟล์หลัก `<feature>.md` + metadata + ประวัติการแก้ไข + `docs/glossary.md` + `docs/README.md` (เมื่อเกิน 3 feature) |
 | `scripts/fetch-diagram-design.sh`      | จัดการ vendored diagram-design (`--list`, `--copy`, `--verify`, `--verify-upstream`, `--update`, `--update-latest`)                  |
 | `scripts/vendor-cdn.sh <dir> <url>...` | snapshot CDN asset ลง `assets/vendor/` (https + pinned, ใส่ `#sha256=<hex>` ตรวจ integrity ได้)                                      |
 | `scripts/check-html.sh <file>`         | ตรวจว่า HTML include dependency ครบ (mermaid/tailwind)                                                                               |
@@ -961,10 +976,10 @@ evidence จาก source code
 20. ไม่มีข้อมูลอ่อนไหว (secret, PII, production data, hostname/IP/URL จริง,
     path เฉพาะเครื่อง) ในไฟล์ใด ๆ — ใช้ placeholder แทน
 21. คำใหม่ถูกเพิ่มใน `docs/glossary.md` และค่า enum จริงแสดงคู่คำไทยในตารางสถานะ/กฎ
-22. ถ้าแยกเอกสารหลายไฟล์: `README.md` ยืนได้ด้วยตัวเอง มีสารบัญลิงก์ไฟล์ย่อย
+22. ถ้าแยกเอกสารหลายไฟล์: ไฟล์หลัก `<feature-name>.md` ยืนได้ด้วยตัวเอง มีสารบัญลิงก์ไฟล์ย่อย
     และไม่มีเนื้อหาซ้ำซ้อนกับไฟล์ย่อย
 23. ถ้ามีเอกสารเกิน 3 feature: `docs/README.md` เป็นสารบัญกลางและอัปเดตแล้ว
-24. เทียบระดับความลึกกับ `examples/<level>/README.md` แล้ว — ไม่หยาบกว่าตัวอย่าง
+24. เทียบระดับความลึกกับ `examples/<level>/expense-reimbursement.md` แล้ว — ไม่หยาบกว่าตัวอย่าง
 
 Priority:
 
