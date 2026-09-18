@@ -26,6 +26,17 @@ check 'class="mermaid"' \
       'mermaid\.initialize' \
       'ต้องเรียก mermaid.initialize({ startOnLoad: true }) เมื่อมี mermaid block'
 
+# Mermaid draws on a transparent canvas: a generic dark `pre` background would
+# swallow the diagram. Flatten the file (CSS rules span multiple lines) and look
+# for a dark pre style without a pre.mermaid override in the same file.
+flat="$(tr '\n' ' ' < "$FILE")"
+if grep -qE 'class="mermaid"' "$FILE" \
+   && printf '%s' "$flat" | grep -qE 'pre[^{}]*\{[^}]*background:[[:space:]]*(var\(--color-ink\)|var\(--color-simulator\)|#[0-3][0-9a-fA-F]{2,5})' \
+   && ! printf '%s' "$flat" | grep -qE 'pre\.mermaid[^{}]*\{'; then
+  echo 'MISSING: ธีมมี pre พื้นเข้ม (code-block) แต่ไม่มี pre.mermaid override — mermaid ต้อง render บนพื้นสว่าง (ดู กฎการสร้าง HTML ข้อ 3)'
+  fail=1
+fi
+
 if grep -qE 'tailwindcss|@apply' "$FILE" || \
    grep -oE 'class="[^"]+"' "$FILE" | \
    grep -qE '(^|[[:space:]])(flex|grid|grid-cols-[0-9]+|px-[0-9]+|py-[0-9]+|text-(xs|sm|lg|xl))([[:space:]]|")'; then

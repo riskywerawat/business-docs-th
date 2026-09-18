@@ -409,6 +409,14 @@ pre {
   font-size: 12px;
 }
 
+/* Mermaid draws on a transparent canvas — keep diagrams on the light surface,
+   never on the dark code-block background above. */
+pre.mermaid {
+  padding: 10px;
+  color: var(--color-ink);
+  background: var(--color-surface);
+}
+
 table {
   width: 100%;
   border-collapse: collapse;
