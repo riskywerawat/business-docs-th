@@ -29,7 +29,10 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="./assets/business-docs-ui.css">
+<style>
+/* Inline the full assets/templates/business-docs-ui.css here (keep the
+   pre.mermaid light-background override at the end of the file). */
+</style>
 <link rel="preconnect" href="https://esm.sh" crossorigin>
 <!-- ถ้าใช้ React workbench -->
 <script type="importmap">{"imports":{"react":"https://esm.sh/react@19.2.0"}}</script>

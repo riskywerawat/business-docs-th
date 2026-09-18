@@ -522,9 +522,8 @@ docs/
 └── <feature-name>/
     ├── README.md           (metadata + สรุป + ภาพรวม + สารบัญ)
     ├── flow.md / rules.md / api.md / ui.md   (ถ้าแยกเอกสาร ตามหัวข้อ "การแบ่งเอกสารเมื่อ feature ใหญ่")
-    ├── index.html          (ถ้าผู้ใช้เลือกทำ HTML template)
+    ├── index.html          (ถ้าผู้ใช้เลือกทำ HTML template — theme CSS inline ใน <style> ของไฟล์นี้)
     └── assets/
-        ├── business-docs-ui.css (HTML reference ทุกแบบยกเว้น slide)
         ├── ui/             (screenshot)
         ├── illustrations/  (AI conceptual illustrations)
         └── architecture/
@@ -538,10 +537,10 @@ docs/<feature-name>/
     └── index.html
 ```
 
-ให้ copy `assets/templates/business-docs-ui.css` ไปที่
-`docs/<feature-name>/assets/business-docs-ui.css` ก่อนสร้าง HTML ที่ไม่ใช่ slide
-และ link ด้วย `./assets/business-docs-ui.css`; ถ้าเป็น simulation ให้ใช้
-`../assets/business-docs-ui.css`
+ห้ามสร้างไฟล์ `docs/<feature-name>/assets/business-docs-ui.css` อีกต่อไป —
+ให้ inline เนื้อ `assets/templates/business-docs-ui.css` ทั้งไฟล์ไว้ใน `<style>`
+ของ `index.html` ที่สร้าง (รวมถึง `simulation/index.html`) แทนการ
+`<link>` ไปยังไฟล์ css แยก เพื่อให้ docs directory สะอาดและย้ายไฟล์ไม่พัง path
 
 ---
 
@@ -710,9 +709,10 @@ Safety: ห้ามแคปที่มี password, token, secret, production
 อ่านไฟล์ reference ของสไตล์นั้นก่อนสร้างทุกครั้ง
 
 สำหรับ `swagger`, `docusaurus`, `dashboard` และ simulation ให้ใช้
-`references/ui-theme.md` กับ `assets/templates/business-docs-ui.css` เป็น shared
-visual foundation เดียวกันเสมอ: IBM Plex Sans Thai สำหรับ display/body และ
-IBM Plex Mono สำหรับ technical text ส่วน `slide` ใช้ template ของ slide เอง
+`references/ui-theme.md` โดย inline เนื้อ `assets/templates/business-docs-ui.css`
+ไว้ใน `<style>` ของ HTML ที่สร้างเป็น shared visual foundation เดียวกันเสมอ:
+IBM Plex Sans Thai สำหรับ display/body และ IBM Plex Mono สำหรับ technical text
+ส่วน `slide` ใช้ template ของ slide เอง
 
 เมื่อเลือก `slide` ให้ใช้ `assets/templates/slide-template.html` เป็น visual shell
 สำหรับสี ฟอนต์ spacing, fixed chrome, navigation และ animation แล้วแทนที่เนื้อหา
@@ -749,6 +749,10 @@ evidence จาก source code
   ไม่มี element ซ้อน/ล้น, text overlap หรือถูกตัด, spacing และ visual hierarchy
   ไม่พัง, ภาพไม่ยืดผิดสัดส่วน, ลูกศร/เส้น/กล่องยัง align กัน, สีและ contrast อ่านได้,
   interactive states ใช้งานได้ และไม่มี horizontal scroll
+- ตรวจเฉพาะ mermaid: diagram ทุกอันต้องอยู่บนพื้นสว่าง (พื้นเข้มของ `pre`
+  code-block ห้ามทับ diagram) และเส้น/ลูกศร/label ทุกชิ้นต้องอ่านได้ชัด
+  รวมถึง label ที่อยู่กลางเส้น — เคยพบจุดนี้พังจาก `pre { background: var(--color-ink) }`
+  ของธีม จึงต้องเช็กทุกครั้งเมื่อทำ visual QA
 - ตรวจอย่างน้อย desktop และความกว้าง 320, 375, 414 และ 768 px; สำหรับ `slide`
   ให้ตรวจทุก slide/section รวมถึง fixed chrome, scroll-snap, navigation, animation
   และข้อความใน `example.png`/ภาพประกอบไม่ถูก crop หรือบีบจนเสียสัดส่วน
@@ -775,14 +779,26 @@ evidence จาก source code
 3. **Mermaid ใน HTML** — ต้อง include mermaid และเรียก
    `mermaid.initialize({ startOnLoad: true })` แล้ววาง diagram เป็น
    `<pre class="mermaid">...</pre>` — อย่าลืม dependency นี้ทุกครั้งที่มี diagram
+   และ mermaid ต้อง render บนพื้นสว่างเสมอ: mermaid วาดบน canvas โปร่งใส
+   ถ้าธีมมี rule `pre { background: var(--color-ink) }` (พื้นเข้มของ code block)
+   diagram จะจมอยู่บนพื้นเข้มจนเส้น/label มองไม่เห็น — template CSS ใส่
+   `pre.mermaid` override (พื้น `var(--color-surface)`, ตัวอักษร `var(--color-ink)`)
+   ไว้ให้แล้ว ห้ามลบทิ้ง และห้ามเขียน `<style>` ที่ไปใส่พื้นเข้มให้ `pre.mermaid` ซ้ำ;
+   ตรวจซ้ำใน visual QA ทุกครั้งว่าเส้น ลูกศร label ของ diagram อ่านได้ครบ
 4. **Tailwind** — ถ้าใช้ Tailwind ให้ใช้ browser build ที่ pin version เช่น
    `<script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4.3.3"></script>`
    พร้อม importmap สำหรับ React ถ้าจำเป็น (ดูตัวอย่างใน template reference)
 5. **Fonts ไทย** — reference ที่ไม่ใช่ `slide` ต้องใช้ IBM Plex Sans Thai และ
    IBM Plex Mono ตาม `references/ui-theme.md` แบบเดียวกับ Order Fulfillment reference
-6. **ตรวจสอบก่อนส่ง** — `./scripts/check-html.sh <file.html>` เพื่อตรวจว่า
+6. **Theme CSS inline** — สำหรับ `swagger`, `docusaurus`, `dashboard` และ simulation
+   ให้ inline เนื้อ `assets/templates/business-docs-ui.css` ทั้งไฟล์ไว้ใน `<style>`
+   ของ HTML ที่สร้าง ห้ามสร้างไฟล์ `assets/business-docs-ui.css` แยกหรือ `<link>`
+   ไปยังไฟล์ css ที่ copy ออกมาแล้ว — theme อย่างน้อยต้องถูก copy จาก template
+   ล่าสุดเสมอ (ซึ่งมี `pre.mermaid` light-background override ในตัว) และไฟล์ HTML
+   ยกพอร์ตไปไว้ที่อื่นได้โดยไม่พัง path
+7. **ตรวจสอบก่อนส่ง** — `./scripts/check-html.sh <file.html>` เพื่อตรวจว่า
    mermaid/tailwind ที่ HTML อ้างถึงถูก include ครบ
-7. **AI system overview** — ถ้าเอกสารมี actor/role และผู้ใช้เลือก
+8. **AI system overview** — ถ้าเอกสารมี actor/role และผู้ใช้เลือก
    `ai-illustration` ต้องมีภาพ, alt text, caption และป้าย
    `AI-GENERATED ILLUSTRATION · CONCEPTUAL` ครบ; ถ้าเลือก `none` ห้ามสร้างภาพ
 
@@ -892,7 +908,9 @@ evidence จาก source code
 
 - ทุกหัวข้อใน Markdown มีอยู่ใน HTML และไม่มีเนื้อหาใน HTML ที่ Markdown ไม่มี
 - ตัวเลขและสถานะตรงกันทุกจุด ไม่มีค่า drift ระหว่างสอง format
-- Mermaid ใน HTML ถูก include และ initialize ครบ, CDN pinned version
+- Mermaid ใน HTML ถูก include และ initialize ครบ, CDN pinned version,
+  diagram ทุกอันอยู่บนพื้นสว่าง (มี `pre.mermaid` override และไม่ถูกพื้นเข้มของ
+  `pre` code-block ทับ)
 - ลิงก์ทุกจุดกดได้ ไม่มี anchor ตก หรือ path ที่ไม่มีอยู่จริง
 
 ## 7. Metadata & Safety

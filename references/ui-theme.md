@@ -3,10 +3,11 @@
 HTML reference ทุกแบบยกเว้น `slide` ต้องใช้ visual system นี้เป็นฐาน เพื่อให้
 เอกสารทั้งชุดดูเป็น product เดียวกัน แม้โครงเนื้อหาจะต่างกัน
 
-เมื่อสร้างเอกสารจริง ให้ copy `assets/templates/business-docs-ui.css` ไปไว้ที่
-`docs/<feature-name>/assets/business-docs-ui.css` แล้ว link ด้วย
-`./assets/business-docs-ui.css`; simulation ที่อยู่ใน `simulation/` ให้ใช้
-`../assets/business-docs-ui.css`
+เมื่อสร้างเอกสารจริง ให้ inline เนื้อ `assets/templates/business-docs-ui.css`
+ทั้งไฟล์ไว้ใน `<style>` ของ HTML ที่สร้าง (ทั้ง `index.html` และ
+`simulation/index.html`) — ห้าม copy ออกเป็นไฟล์ `assets/business-docs-ui.css`
+แล้ว `<link>` กลับเข้ามา และอย่าลบ `pre.mermaid` override ท้ายไฟล์ทิ้ง
+เพราะเป็นตัวกันไม่ให้ mermaid จมบนพื้นเข้มของ code-block `pre`
 
 ## Direction
 
